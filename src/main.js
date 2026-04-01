@@ -7,6 +7,7 @@ import { Animations } from './js/ui/animations.js';
 import { AudioEngine } from './js/ui/audio.js';
 import { AI } from './js/ai/gemini.js';
 import { loginWithGoogle, logOut } from './js/state/firebase.js';
+import { Nutrition } from './js/pages/nutrition.js';
 
 // Initialization sequence
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,7 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
   AudioEngine.init();
   Store.init();
   Router.init();
+  Nutrition.init();
   
+  // Set toggle state
+  const skipToggle = document.getElementById('skip-intro-toggle');
+  if(skipToggle) skipToggle.checked = localStorage.getItem('spiderOS_skipIntro') === 'true';
+
   Animations.initIntro(document.getElementById('intro-canvas'));
   Animations.drawWebBg('web-canvas');
   Animations.initParticles('pts');
@@ -31,7 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // Intro Animation orchestration
 function runIntroSequence() {
   const intro = document.getElementById('intro');
-  if(!intro || intro.style.display === 'none') {
+  const skip = localStorage.getItem('spiderOS_skipIntro') === 'true';
+  
+  if(skip || !intro || intro.style.display === 'none') {
+    if(intro) intro.style.display = 'none';
     launchApp();
     return;
   }
@@ -165,7 +174,11 @@ function setupAuthUI() {
       await loginWithGoogle();
       alert("Logged in successfully. Cloud sync is active!");
     } catch(err) {
-      alert("Error logging in: " + err.message);
+      if(err.code === 'auth/unauthorized-domain') {
+        alert("Firebase Domain Error!\n\nTo login, you must go to your Firebase Console -> Authentication -> Settings -> Authorized Domains and add 'amdspider.github.io' to the whitelist.");
+      } else {
+        alert("Error logging in: " + err.message);
+      }
     }
   };
 
@@ -186,6 +199,12 @@ if(cur && ring) {
 }
 
 // Export useful globals for inline HTML backwards compatibility
+window.saveAppPrefs = () => {
+  const skip = document.getElementById('skip-intro-toggle')?.checked || false;
+  localStorage.setItem('spiderOS_skipIntro', skip);
+  AudioEngine.play('success');
+};
+
 window.saveApiKey = () => {
   const inp = document.getElementById('api-key-input').value;
   localStorage.setItem('spider_gemini_key', inp);

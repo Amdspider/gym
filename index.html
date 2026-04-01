@@ -86,16 +86,16 @@
         <line x1="4"  y1="4"  x2="30" y2="30" stroke="rgba(230,51,41,.18)" stroke-width=".8"/>
         <line x1="30" y1="4"  x2="4"  y2="30" stroke="rgba(230,51,41,.18)" stroke-width=".8"/>
       </svg>
-      <button class="nb act" onclick="go('overview')" id="nb-overview">â¬¡<span class="tip">Overview</span></button>
-      <button class="nb"     onclick="go('habits')"   id="nb-habits">âœ“<span class="tip">Habits</span></button>
-      <button class="nb"     onclick="go('gym')"      id="nb-gym">âŠ•<span class="tip">Gym</span></button>
-      <button class="nb"     onclick="go('nutrition')"id="nb-nutrition">â—Ž<span class="tip">Nutrition</span></button>
-      <button class="nb"     onclick="go('water')"    id="nb-water">â—ˆ<span class="tip">Water</span></button>
-      <button class="nb"     onclick="go('analytics')"id="nb-analytics">â‰ˆ<span class="tip">Analytics</span></button>
-      <button class="nb"     onclick="go('history')"  id="nb-history">â—·<span class="tip">History</span></button>
+      <button class="nb act" onclick="go('overview')" id="nb-overview">⬡<span class="tip">Overview</span></button>
+      <button class="nb"     onclick="go('habits')"   id="nb-habits">✅<span class="tip">Habits</span></button>
+      <button class="nb"     onclick="go('gym')"      id="nb-gym">🏋️<span class="tip">Gym</span></button>
+      <button class="nb"     onclick="go('nutrition')"id="nb-nutrition">🥩<span class="tip">Nutrition</span></button>
+      <button class="nb"     onclick="go('water')"    id="nb-water">💧<span class="tip">Water</span></button>
+      <button class="nb"     onclick="go('analytics')"id="nb-analytics">📈<span class="tip">Analytics</span></button>
+      <button class="nb"     onclick="go('history')"  id="nb-history">🕒<span class="tip">History</span></button>
       <div class="sb-bot">
-        <button class="nb"   onclick="go('account')"  id="nb-account">â—‰<span class="tip">Account</span></button>
-        <button class="nb"   onclick="go('settings')" id="nb-settings">âš™<span class="tip">Settings & API Key</span></button>
+        <button class="nb"   onclick="go('account')"  id="nb-account">👤<span class="tip">Account</span></button>
+        <button class="nb"   onclick="go('settings')" id="nb-settings">⚙️<span class="tip">Settings & API Key</span></button>
       </div>
     </nav>
 
@@ -191,13 +191,20 @@
         <div class="macro-rings" id="macro-rings"></div>
         <div class="card">
           <div class="card-t"><span class="ac">ðŸ½</span> Food Log</div>
-          <div class="add-food-row">
-            <input type="text"   class="inp" id="food-nm"  placeholder="Food name...">
-            <input type="number" class="inp" id="food-cal" placeholder="kcal">
-            <input type="number" class="inp" id="food-pro" placeholder="P g">
-            <input type="number" class="inp" id="food-crb" placeholder="C g">
-            <input type="number" class="inp" id="food-fat" placeholder="F g">
-            <button class="btn" onclick="addFood()">ADD</button>
+          <div class="add-food-row" style="display:flex; flex-wrap:wrap; gap:8px;">
+            <input type="text" class="inp" id="food-nm" placeholder="Search or add food..." oninput="onFoodInput()" style="flex:2; min-width:120px;">
+            <select class="inp" id="food-unit" onchange="calcFoodMacros()" style="flex:1; min-width:80px;">
+              <option value="item">Units</option>
+              <option value="g">Grams</option>
+            </select>
+            <input type="number" class="inp" id="food-qty" placeholder="Qty" oninput="calcFoodMacros()" value="1" style="flex:1; min-width:50px;">
+            <div style="width:100%; display:flex; gap:8px; margin-top:4px;">
+              <input type="number" class="inp" id="food-cal" placeholder="kcal">
+              <input type="number" class="inp" id="food-pro" placeholder="P g">
+              <input type="number" class="inp" id="food-crb" placeholder="C g">
+              <input type="number" class="inp" id="food-fat" placeholder="F g">
+              <button class="btn" onclick="addFoodRecord()">ADD</button>
+            </div>
           </div>
           <div id="food-log"></div>
         </div>
@@ -338,20 +345,20 @@
 
         <!-- API KEY CARD -->
         <div class="card" style="margin-bottom:14px;border-color:rgba(230,51,41,.22)">
-          <div class="card-t"><span class="ac">ðŸ”‘</span> Claude API Key â€” AI Coach</div>
+          <div class="card-t"><span class="ac">🔑</span> Gemini API Key — AI Coach</div>
 
           <!-- How it works info strip -->
           <div style="background:rgba(0,176,255,.06);border:1px solid rgba(0,176,255,.18);border-radius:10px;padding:13px 15px;margin-bottom:18px;display:flex;gap:13px;align-items:flex-start">
-            <span style="font-size:22px;flex-shrink:0">ðŸ”’</span>
+            <span style="font-size:22px;flex-shrink:0">🔒</span>
             <div>
-              <div style="font-family:var(--fd);font-size:11px;font-weight:700;color:var(--bl3);letter-spacing:1px;margin-bottom:4px">100% PRIVATE â€” STORED ON YOUR DEVICE ONLY</div>
-              <div style="font-size:12px;color:var(--mut);line-height:1.7;font-weight:500">Your API key is saved in your browser's localStorage. It <strong style="color:var(--wht)">never appears in the code</strong>, never gets uploaded to GitHub, and is never sent anywhere except directly to Anthropic's servers when you use the AI Coach.</div>
+              <div style="font-family:var(--fd);font-size:11px;font-weight:700;color:var(--bl3);letter-spacing:1px;margin-bottom:4px">100% PRIVATE — STORED ON YOUR DEVICE ONLY</div>
+              <div style="font-size:12px;color:var(--mut);line-height:1.7;font-weight:500">Your API key is saved in your browser's localStorage. It <strong style="color:var(--wht)">never appears in the code</strong>, never gets uploaded to GitHub, and is never sent anywhere except directly to Google's servers when you use the AI Coach.</div>
             </div>
           </div>
 
           <!-- Key input area -->
           <div style="margin-bottom:16px">
-            <label class="lbl-small">YOUR CLAUDE API KEY</label>
+            <label class="lbl-small">YOUR GEMINI API KEY</label>
             <div style="display:flex;gap:8px;align-items:center">
               <input type="password" class="inp" id="api-key-input" placeholder="sk-ant-api03-..." style="font-family:monospace;letter-spacing:1px;flex:1" oninput="updateKeyStatus()">
               <button class="btn" onclick="saveApiKey()" style="white-space:nowrap;flex-shrink:0">SAVE KEY</button>
@@ -375,9 +382,15 @@
           <button class="btn dng" id="remove-key-btn" onclick="removeApiKey()" style="display:none">🗑 REMOVE SAVED KEY</button>
         </div>
 
-        <!-- AUDIO ENGINE CARD -->
+        <!-- AUDIO ENGINE & PREFS CARD -->
         <div class="card" style="margin-bottom:14px">
-          <div class="card-t"><span class="ac">🎵</span> Audio Engine System</div>
+          <div class="card-t"><span class="ac">🎵</span> System Preferences</div>
+          
+          <div class="tgl-row" style="margin-bottom:12px">
+            <label class="tgl"><input type="checkbox" id="skip-intro-toggle" onchange="saveAppPrefs()"><span class="tgl-sl"></span></label>
+            <span class="tgl-lb" style="color:var(--wht);font-weight:700">Skip Intro Animation on Boot</span>
+          </div>
+
           <div class="tgl-row" style="margin-bottom:12px">
             <label class="tgl"><input type="checkbox" id="audio-toggle" onchange="saveAudioSettings()" checked><span class="tgl-sl"></span></label>
             <span class="tgl-lb" style="color:var(--wht);font-weight:700">Enable Sound Effects</span>
@@ -387,30 +400,55 @@
             <select class="inp" id="audio-pack" onchange="saveAudioSettings()">
               <option value="scifi" selected>Sci-Fi Cyberpunk (Default)</option>
               <option value="minimal">Minimalist UI</option>
+              <option value="spider">Spider-Verse (Webs & Venoms)</option>
             </select>
           </div>
           <p style="font-size:11px;color:var(--mut);line-height:1.5;margin-top:6px">The audio engine synthesizes butter-smooth UI sounds using your device's native Web Audio API.</p>
         </div>
 
+        <!-- NUTRITION SETTINGS CARD -->
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-t"><span class="ac">🥩</span> Nutrition Database Setup</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <p style="font-size:11px;color:var(--mut);line-height:1.5;margin-top:0px">Save specific foods here to auto-calculate their macros when you type them in the Food Log.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <input type="text" class="inp" id="ndb-name" placeholder="Food Name (e.g. Peanuts)" style="flex:2">
+              <input type="number" class="inp" id="ndb-base" placeholder="Base Qty (e.g. 100)" style="flex:1">
+              <select class="inp" id="ndb-unit" style="flex:1"><option value="g">grams</option><option value="item">units</option></select>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <input type="number" class="inp" id="ndb-k" placeholder="kcal">
+              <input type="number" class="inp" id="ndb-p" placeholder="Pro">
+              <input type="number" class="inp" id="ndb-c" placeholder="Crb">
+              <input type="number" class="inp" id="ndb-f" placeholder="Fat">
+            </div>
+            <div style="display:flex; gap:6px; margin-top:4px;">
+              <button class="btn blu" onclick="askAiNutrition()">🧠 AUTO-FILL WITH AI</button>
+              <button class="btn" onclick="saveFoodToDb()">SAVE FOOD</button>
+            </div>
+          </div>
+          <div id="ndb-list" class="stk" style="margin-top:12px; max-height:150px; overflow-y:auto;"></div>
+        </div>
+
         <!-- HOW TO GET KEY CARD -->
         <div class="card" style="margin-bottom:14px">
-          <div class="card-t"><span class="ac">ðŸ“–</span> How to Get Your API Key (Free)</div>
+          <div class="card-t"><span class="ac">📖</span> How to Get Your API Key (Free)</div>
           <div style="display:flex;flex-direction:column;gap:0">
             <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--br);align-items:flex-start">
               <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--red),#c0392b);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:700;color:#fff;flex-shrink:0">1</div>
-              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Go to console.anthropic.com</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Create a free Anthropic account if you don't have one.</div></div>
+              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Go to aistudio.google.com</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Sign in with your Google account.</div></div>
             </div>
             <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--br);align-items:flex-start">
               <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--red),#c0392b);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:700;color:#fff;flex-shrink:0">2</div>
-              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Click "API Keys" in the sidebar</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Then click "Create Key" â€” give it any name like "SPIDER OS".</div></div>
+              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Click "Get API Key" on the left</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Then click "Create API key in real project" — give it any name like "SPIDER OS".</div></div>
             </div>
             <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--br);align-items:flex-start">
               <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--red),#c0392b);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:700;color:#fff;flex-shrink:0">3</div>
-              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Copy the key</div><div style="font-size:11px;color:var(--mut);line-height:1.6">It starts with <span style="font-family:monospace;color:var(--bl3);font-size:11px">sk-ant-</span> â€” copy the whole thing. You only see it once!</div></div>
+              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Copy the key</div><div style="font-size:11px;color:var(--mut);line-height:1.6">It starts with <span style="font-family:monospace;color:var(--bl3);font-size:11px">AIzaSy</span> — copy the whole thing.</div></div>
             </div>
             <div style="display:flex;gap:14px;padding:13px 0;align-items:flex-start">
               <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--grn),#00c853);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:700;color:#000;flex-shrink:0">4</div>
-              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Paste it above and click Save</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Your AI Coach activates instantly. Anthropic gives ~$5 free credits to start.</div></div>
+              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Paste it above and click Save</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Your AI Coach activates instantly. Google gives you a very generous free tier to start.</div></div>
             </div>
           </div>
         </div>

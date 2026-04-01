@@ -108,6 +108,42 @@ export const AudioEngine = {
         osc.start(t);
         osc.stop(t + 0.3);
       }
+    }
+    // Spider Pack
+    else if (this.pack === 'spider') {
+      if (type === 'click') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1200, t);
+        osc.frequency.exponentialRampToValueAtTime(100, t + 0.15);
+        gain.gain.linearRampToValueAtTime(this.masterVolume, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+        osc.start(t);
+        osc.stop(t + 0.15);
+      } else if (type === 'nav') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, t);
+        osc.frequency.exponentialRampToValueAtTime(50, t + 0.2);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.7, t + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      } else if (type === 'success' || type === 'water') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(1800, t);
+        osc.frequency.linearRampToValueAtTime(1900, t + 0.1);
+        osc.frequency.linearRampToValueAtTime(1800, t + 0.2);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.4, t + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+        osc.start(t);
+        osc.stop(t + 0.3);
+      } else {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, t);
+        gain.gain.linearRampToValueAtTime(this.masterVolume, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+        osc.start(t);
+        osc.stop(t + 0.1);
+      }
     } 
     // Minimal Pack
     else if (this.pack === 'minimal') {
