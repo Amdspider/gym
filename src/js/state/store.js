@@ -19,6 +19,8 @@ export const Store = {
     waterGoal: 8,
     foods: [],
     calorieGoal: 2200,
+    macroGoals: { protein: 150, carbs: 250, fat: 70 },
+    foodDatabase: {},
     exercises: [],
     history: {},
     prs: {},

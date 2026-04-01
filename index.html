@@ -154,17 +154,20 @@
             <div class="card"><div class="card-t"><span class="ac">ðŸ”¥</span> Week</div><div class="wk-grid" id="wk-habits"></div></div>
             <div class="card"><div class="card-t"><span class="ac">ðŸ“Š</span> Stats</div><div id="habit-stats"></div></div>
           </div>
+            <div class="card"><div class="card-t"><span class="ac">🔥</span> Week</div><div class="wk-grid" id="wk-habits"></div></div>
+            <div class="card"><div class="card-t"><span class="ac">📊</span> Stats</div><div id="habit-stats"></div></div>
+          </div>
         </div>
       </div>
 
-      <!-- â”€â”€ GYM â”€â”€ -->
+      <!-- ── GYM ── -->
       <div class="page" id="page-gym">
         <div class="sec-hdr"><div class="sec-title">GYM<small>STRENGTH TRAINING</small></div><span class="badge b-lck" id="gym-badge">LOCKED</span></div>
-        <div id="gym-lock" class="gym-lock"><div class="gi">ðŸ”’</div><p style="font-size:13px;font-weight:600">Check your <span style="color:var(--bl3)">Gym</span> habit to unlock training.</p></div>
+        <div id="gym-lock" class="gym-lock"><div class="gi">🔒</div><p style="font-size:13px;font-weight:600">Check your <span style="color:var(--bl3)">Gym</span> habit to unlock training.</p></div>
         <div id="gym-active" style="display:none">
           <div class="g2">
             <div class="card">
-              <div class="card-t"><span class="ac">âš¡</span> Workout</div>
+              <div class="card-t"><span class="ac">⚡</span> Workout</div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
                 <button class="btn sec" onclick="loadTpl('push')">PUSH</button>
                 <button class="btn sec" onclick="loadTpl('pull')">PULL</button>
@@ -175,24 +178,56 @@
               <button class="btn blu" style="width:100%;margin-top:10px" onclick="addExModal()">+ ADD EXERCISE</button>
             </div>
             <div class="stk">
-              <div class="card"><div class="card-t"><span class="ac">ðŸ“ˆ</span> Session</div><div id="gym-sum"></div></div>
-              <div class="card"><div class="card-t"><span class="ac">ðŸ†</span> Personal Records</div><div id="pr-list"></div></div>
+              <div class="card"><div class="card-t"><span class="ac">📈</span> Session</div><div id="gym-sum"></div></div>
+              <div class="card"><div class="card-t"><span class="ac">🏆</span> Personal Records</div><div id="pr-list"></div></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- â”€â”€ NUTRITION â”€â”€ -->
+      <!-- ── NUTRITION ── -->
       <div class="page" id="page-nutrition">
         <div class="sec-hdr">
           <div class="sec-title">NUTRITION<small>FUEL YOUR BODY</small></div>
-          <div class="row"><span style="font-size:9px;color:var(--mut);letter-spacing:1px">GOAL</span><input type="number" class="inp" id="cal-goal" value="2200" style="width:85px" oninput="saveData();renderNutrition()"><span style="font-size:9px;color:var(--mut)">KCAL</span></div>
         </div>
-        <div class="macro-rings" id="macro-rings"></div>
+
+        <!-- MACRO PROGRESS DASHBOARD -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-t">📊 Today's Macro Progress</div>
+          <div id="macro-dashboard" style="display:flex; flex-direction:column; gap:14px; margin-top:8px;">
+            <!-- rendered by renderNutrition() -->
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; margin-top:14px;">
+            <div style="text-align:center; padding:10px; background:rgba(255,255,255,.04); border-radius:10px; border:1px solid var(--br);">
+              <div style="font-size:9px; color:var(--mut); letter-spacing:1.5px; margin-bottom:5px;">CALORIES</div>
+              <div id="sum-cal" style="font-family:var(--fh); font-size:22px; color:var(--gld);">0</div>
+              <div id="goal-cal-lbl" style="font-size:9px; color:var(--mut); margin-top:2px;">/ 2200 kcal</div>
+            </div>
+            <div style="text-align:center; padding:10px; background:rgba(255,255,255,.04); border-radius:10px; border:1px solid var(--br);">
+              <div style="font-size:9px; color:var(--mut); letter-spacing:1.5px; margin-bottom:5px;">PROTEIN</div>
+              <div id="sum-pro" style="font-family:var(--fh); font-size:22px; color:var(--red);">0g</div>
+              <div id="goal-pro-lbl" style="font-size:9px; color:var(--mut); margin-top:2px;">/ 150g goal</div>
+            </div>
+            <div style="text-align:center; padding:10px; background:rgba(255,255,255,.04); border-radius:10px; border:1px solid var(--br);">
+              <div style="font-size:9px; color:var(--mut); letter-spacing:1.5px; margin-bottom:5px;">CARBS</div>
+              <div id="sum-crb" style="font-family:var(--fh); font-size:22px; color:var(--bl3);">0g</div>
+              <div id="goal-crb-lbl" style="font-size:9px; color:var(--mut); margin-top:2px;">/ 250g goal</div>
+            </div>
+            <div style="text-align:center; padding:10px; background:rgba(255,255,255,.04); border-radius:10px; border:1px solid var(--br);">
+              <div style="font-size:9px; color:var(--mut); letter-spacing:1.5px; margin-bottom:5px;">FATS</div>
+              <div id="sum-fat" style="font-family:var(--fh); font-size:22px; color:var(--prp);">0g</div>
+              <div id="goal-fat-lbl" style="font-size:9px; color:var(--mut); margin-top:2px;">/ 70g goal</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOD LOG + ADD -->
         <div class="card">
-          <div class="card-t"><span class="ac">ðŸ½</span> Food Log</div>
-          <div class="add-food-row" style="display:flex; flex-wrap:wrap; gap:8px;">
-            <input type="text" class="inp" id="food-nm" placeholder="Search or add food..." oninput="onFoodInput()" style="flex:2; min-width:120px;">
+          <div class="card-t">🍽️ Food Log</div>
+
+          <!-- SEARCH & QUICK-ADD -->
+          <div id="food-search-row" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+            <input type="text" class="inp" id="food-nm" placeholder="🔍 Type food name to search DB..." oninput="onFoodInput()" style="flex:3; min-width:140px;">
             <select class="inp" id="food-unit" onchange="calcFoodMacros()" style="flex:1; min-width:80px;">
               <option value="item">Units</option>
               <option value="g">Grams</option>
@@ -428,6 +463,31 @@
             </div>
           </div>
           <div id="ndb-list" class="stk" style="margin-top:12px; max-height:150px; overflow-y:auto;"></div>
+        </div>
+
+        <!-- DAILY MACRO GOALS CARD -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-t"><span class="ac">🎯</span> Daily Macro Goals</div>
+          <p style="font-size:11px;color:var(--mut);line-height:1.5;margin-top:0;margin-bottom:12px;">Set your daily nutrition targets. These will appear as progress bars on the Nutrition page.</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label class="lbl-small">CALORIES (kcal)</label>
+              <input type="number" class="inp" id="goal-cal-inp" placeholder="2200" oninput="window.saveMacroGoals()">
+            </div>
+            <div>
+              <label class="lbl-small">PROTEIN (g)</label>
+              <input type="number" class="inp" id="goal-pro-inp" placeholder="150" oninput="window.saveMacroGoals()">
+            </div>
+            <div>
+              <label class="lbl-small">CARBS (g)</label>
+              <input type="number" class="inp" id="goal-crb-inp" placeholder="250" oninput="window.saveMacroGoals()">
+            </div>
+            <div>
+              <label class="lbl-small">FATS (g)</label>
+              <input type="number" class="inp" id="goal-fat-inp" placeholder="70" oninput="window.saveMacroGoals()">
+            </div>
+          </div>
+          <button class="btn" onclick="window.saveMacroGoals(true)" style="width:100%; margin-top:12px;">💾 SAVE MACRO GOALS</button>
         </div>
 
         <!-- HOW TO GET KEY CARD -->
