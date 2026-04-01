@@ -1,0 +1,45 @@
+/* ═══════════════════════════════════════════════════════
+   BASE STYLES & CURSOR
+═══════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body {
+  background:var(--dk);
+  color:var(--wht);
+  font-family:var(--fb);
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+}
+body::after {
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.022) 2px,rgba(0,0,0,.022) 4px);
+}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(230,51,41,.3);border-radius:2px}
+
+/* CUSTOM CURSOR */
+#cur {
+  position:fixed;width:10px;height:10px;background:var(--red);border-radius:50%;pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);box-shadow:0 0 12px var(--red),0 0 30px rgba(230,51,41,.35);
+  will-change: transform;
+}
+#cur-ring {
+  position:fixed;width:34px;height:34px;border:1.5px solid rgba(230,51,41,.45);border-radius:50%;
+  pointer-events:none;z-index:99998;transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,opacity .2s;
+  will-change: left, top, width, height;
+}
+
+/* HARDWARE ACCELERATED ANIMATIONS */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(9px) translateZ(0)}
+  to{opacity:1;transform:translateZ(0)}
+}
+.page { 
+  display:none; 
+  /* Hardware accelerate page transitions */
+  will-change: transform, opacity;
+  animation:fadeUp .38s ease; 
+}
+.page.act { display:block; }

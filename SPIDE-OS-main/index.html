@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SPIDER OS">
+<meta name="theme-color" content="#04060f">
+<title>SPIDER OS</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./src/styles/variables.css">
+<link rel="stylesheet" href="./src/styles/base.css">
+<link rel="stylesheet" href="./src/styles/layout.css">
+<link rel="stylesheet" href="./src/styles/components.css">
+<link rel="stylesheet" href="./src/styles/pages.css">
+</head>
+<body>
+<!-- CURSOR -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     CINEMATIC INTRO
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div id="intro">
+  <canvas id="intro-canvas"></canvas>
+  <div id="intro-vignette"></div>
+  <div id="flash"></div>
+
+  <!-- Comic panels that flash in sequence -->
+  <div class="c-panel" id="cp1" style="top:8%;left:5%;width:160px;height:100px;transform:rotate(-3deg)"><div class="p-content">ðŸ•¸ï¸</div></div>
+  <div class="c-panel" id="cp2" style="top:5%;right:8%;width:140px;height:90px;transform:rotate(2deg)"><div class="p-content">ðŸ’ª</div></div>
+  <div class="c-panel" id="cp3" style="bottom:12%;left:7%;width:130px;height:85px;transform:rotate(1.5deg)"><div class="p-content">âš¡</div></div>
+  <div class="c-panel" id="cp4" style="bottom:10%;right:6%;width:150px;height:95px;transform:rotate(-2deg)"><div class="p-content">ðŸ”¥</div></div>
+
+  <div id="swing">ðŸ•·ï¸</div>
+
+  <div id="intro-logo">
+    <span class="big">SPIDER</span>
+    <span class="sub">O S</span>
+    <span class="tagline">PERFORMANCE MULTIVERSE Â· LOADING</span>
+  </div>
+
+  <div id="intro-bottom">
+    <div id="load-track"><div id="load-bar"></div></div>
+    <div id="load-txt">INITIALIZING...</div>
+  </div>
+
+  <div id="intro-skip" onclick="skipIntro()">SKIP â€º</div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     ONBOARDING
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div id="onboard">
+  <div class="ob-wrap">
+    <div class="ob-hdr">
+      <h1>WELCOME TO <em>SPIDER</em> OS</h1>
+      <p>Let's build your personalized performance plan</p>
+    </div>
+    <div class="ob-dots" id="ob-dots"></div>
+    <div id="ob-content"></div>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     MAIN APP
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div id="app">
+  <canvas id="web-canvas"></canvas>
+  <div class="pts-layer" id="pts"></div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sb-logo">SPIDER</div>
+      <svg class="sb-web" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="16" stroke="rgba(230,51,41,.38)" stroke-width="1"/>
+        <circle cx="17" cy="17" r="10" stroke="rgba(230,51,41,.28)" stroke-width="1"/>
+        <circle cx="17" cy="17" r="4"  stroke="rgba(230,51,41,.48)" stroke-width="1"/>
+        <line x1="17" y1="1"  x2="17" y2="33" stroke="rgba(230,51,41,.28)" stroke-width=".8"/>
+        <line x1="1"  y1="17" x2="33" y2="17" stroke="rgba(230,51,41,.28)" stroke-width=".8"/>
+        <line x1="4"  y1="4"  x2="30" y2="30" stroke="rgba(230,51,41,.18)" stroke-width=".8"/>
+        <line x1="30" y1="4"  x2="4"  y2="30" stroke="rgba(230,51,41,.18)" stroke-width=".8"/>
+      </svg>
+      <button class="nb act" onclick="go('overview')" id="nb-overview">â¬¡<span class="tip">Overview</span></button>
+      <button class="nb"     onclick="go('habits')"   id="nb-habits">âœ“<span class="tip">Habits</span></button>
+      <button class="nb"     onclick="go('gym')"      id="nb-gym">âŠ•<span class="tip">Gym</span></button>
+      <button class="nb"     onclick="go('nutrition')"id="nb-nutrition">â—Ž<span class="tip">Nutrition</span></button>
+      <button class="nb"     onclick="go('water')"    id="nb-water">â—ˆ<span class="tip">Water</span></button>
+      <button class="nb"     onclick="go('analytics')"id="nb-analytics">â‰ˆ<span class="tip">Analytics</span></button>
+      <button class="nb"     onclick="go('history')"  id="nb-history">â—·<span class="tip">History</span></button>
+      <div class="sb-bot">
+        <button class="nb"   onclick="go('account')"  id="nb-account">â—‰<span class="tip">Account</span></button>
+        <button class="nb"   onclick="go('settings')" id="nb-settings">âš™<span class="tip">Settings & API Key</span></button>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="main">
+      <!-- HEADER -->
+      <div class="hdr">
+        <div>
+          <div class="hdr-title">
+            <span class="sp">SPIDER</span><span class="os"> OS</span>
+            <span class="vrs">PERFORMANCE MULTIVERSE</span>
+          </div>
+        </div>
+        <div class="hdr-r">
+          <div class="date-box">
+            <div class="dy" id="today-dy">...</div>
+            <div class="dt" id="today-dt">...</div>
+          </div>
+          <button class="coach-hdr-btn" onclick="toggleCoach()">
+            <span class="pulse-dot"></span> AI COACH
+          </button>
+        </div>
+      </div>
+
+      <!-- â”€â”€ OVERVIEW â”€â”€ -->
+      <div class="page act" id="page-overview">
+        <div class="stats-row">
+          <div class="sc" style="--c:var(--red)"><div class="lb">Daily Score</div><div class="vl" id="ov-score">--</div><div class="sb">/ 100 pts</div></div>
+          <div class="sc" style="--c:var(--bl3)"><div class="lb">Habits</div><div class="vl" id="ov-habits">0/0</div><div class="sb">completed</div></div>
+          <div class="sc" style="--c:var(--gld)"><div class="lb">Calories</div><div class="vl" id="ov-cal">0</div><div class="sb">kcal</div></div>
+          <div class="sc" style="--c:var(--prp)"><div class="lb">Water</div><div class="vl" id="ov-water">0</div><div class="sb">glasses</div></div>
+        </div>
+        <div class="g2" style="margin-bottom:13px">
+          <div class="fb-card"><div class="fb-hdr"><span class="ai-badge">AI ANALYSIS</span><span style="font-size:9px;color:var(--mut);letter-spacing:1px">REAL-TIME</span></div><div class="fb-txt" id="fb-txt">Start tracking to receive your performance analysis.</div><div class="fb-tags" id="fb-tags"></div></div>
+          <div class="card"><div class="card-t"><span class="ac">â–¦</span> This Week</div><div class="wk-grid" id="wk-ov"></div></div>
+        </div>
+        <div class="g3">
+          <div class="card"><div class="card-t"><span class="ac">âœ“</span> Habits</div><div id="ov-habit-list" class="stk" style="gap:5px"></div></div>
+          <div class="card"><div class="card-t"><span class="ac">â—Ž</span> Nutrition</div><div id="ov-macros"></div></div>
+          <div class="card"><div class="card-t"><span class="ac">â—ˆ</span> Hydration</div>
+            <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px">
+              <div class="water-num" id="ov-water-big">0</div>
+              <div><div style="font-size:12px;font-weight:600">glasses</div><div style="font-size:10px;color:var(--mut)" id="ov-wg">Goal: 8</div></div>
+            </div>
+            <div style="display:flex;gap:4px;height:38px" id="ov-water-vis"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- â”€â”€ HABITS â”€â”€ -->
+      <div class="page" id="page-habits">
+        <div class="sec-hdr"><div class="sec-title">HABITS<small>DAILY DISCIPLINE</small></div><button class="btn" onclick="openAddHabit()">+ ADD HABIT</button></div>
+        <div class="g2">
+          <div class="card"><div class="card-t"><span class="ac">ðŸ“…</span> Today</div><div class="stk" style="gap:6px" id="habit-list"></div></div>
+          <div class="stk">
+            <div class="card"><div class="card-t"><span class="ac">ðŸ”¥</span> Week</div><div class="wk-grid" id="wk-habits"></div></div>
+            <div class="card"><div class="card-t"><span class="ac">ðŸ“Š</span> Stats</div><div id="habit-stats"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- â”€â”€ GYM â”€â”€ -->
+      <div class="page" id="page-gym">
+        <div class="sec-hdr"><div class="sec-title">GYM<small>STRENGTH TRAINING</small></div><span class="badge b-lck" id="gym-badge">LOCKED</span></div>
+        <div id="gym-lock" class="gym-lock"><div class="gi">ðŸ”’</div><p style="font-size:13px;font-weight:600">Check your <span style="color:var(--bl3)">Gym</span> habit to unlock training.</p></div>
+        <div id="gym-active" style="display:none">
+          <div class="g2">
+            <div class="card">
+              <div class="card-t"><span class="ac">âš¡</span> Workout</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+                <button class="btn sec" onclick="loadTpl('push')">PUSH</button>
+                <button class="btn sec" onclick="loadTpl('pull')">PULL</button>
+                <button class="btn sec" onclick="loadTpl('legs')">LEGS</button>
+                <button class="btn sec" onclick="loadTpl('full')">FULL BODY</button>
+              </div>
+              <div id="ex-list"></div>
+              <button class="btn blu" style="width:100%;margin-top:10px" onclick="addExModal()">+ ADD EXERCISE</button>
+            </div>
+            <div class="stk">
+              <div class="card"><div class="card-t"><span class="ac">ðŸ“ˆ</span> Session</div><div id="gym-sum"></div></div>
+              <div class="card"><div class="card-t"><span class="ac">ðŸ†</span> Personal Records</div><div id="pr-list"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- â”€â”€ NUTRITION â”€â”€ -->
+      <div class="page" id="page-nutrition">
+        <div class="sec-hdr">
+          <div class="sec-title">NUTRITION<small>FUEL YOUR BODY</small></div>
+          <div class="row"><span style="font-size:9px;color:var(--mut);letter-spacing:1px">GOAL</span><input type="number" class="inp" id="cal-goal" value="2200" style="width:85px" oninput="saveData();renderNutrition()"><span style="font-size:9px;color:var(--mut)">KCAL</span></div>
+        </div>
+        <div class="macro-rings" id="macro-rings"></div>
+        <div class="card">
+          <div class="card-t"><span class="ac">ðŸ½</span> Food Log</div>
+          <div class="add-food-row">
+            <input type="text"   class="inp" id="food-nm"  placeholder="Food name...">
+            <input type="number" class="inp" id="food-cal" placeholder="kcal">
+            <input type="number" class="inp" id="food-pro" placeholder="P g">
+            <input type="number" class="inp" id="food-crb" placeholder="C g">
+            <input type="number" class="inp" id="food-fat" placeholder="F g">
+            <button class="btn" onclick="addFood()">ADD</button>
+          </div>
+          <div id="food-log"></div>
+        </div>
+      </div>
+
+      <!-- â”€â”€ WATER â”€â”€ -->
+      <div class="page" id="page-water">
+        <div class="sec-hdr">
+          <div class="sec-title">WATER<small>STAY HYDRATED</small></div>
+          <div class="row"><span style="font-size:9px;color:var(--mut);letter-spacing:1px">GOAL</span><input type="number" class="inp" id="water-goal-inp" value="8" min="1" max="20" style="width:56px" oninput="saveData();renderWater()"><span style="font-size:9px;color:var(--mut)">GL</span></div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:18px;margin-bottom:16px">
+              <div class="water-num" id="water-big">0</div>
+              <div><div style="font-size:14px;font-weight:700">/ <span id="water-goal-disp">8</span> glasses</div><div style="font-size:10px;color:var(--mut);margin-top:3px"><span id="water-ml">0</span> ml</div></div>
+              <div style="margin-left:auto">
+                <svg width="60" height="60"><circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle id="water-ring" cx="30" cy="30" r="24" fill="none" stroke="var(--bl3)" stroke-width="5" stroke-linecap="round" stroke-dasharray="151" stroke-dashoffset="151" transform="rotate(-90 30 30)" style="filter:drop-shadow(0 0 5px var(--bl3));transition:stroke-dashoffset .4s"/></svg>
+              </div>
+            </div>
+            <div style="display:flex;gap:4px;height:76px" id="water-cups"></div>
+            <div style="display:flex;gap:7px;margin-top:11px">
+              <button class="wbtn" onclick="addWater(1)">+250ml</button>
+              <button class="wbtn" onclick="addWater(2)">+500ml</button>
+              <button class="wbtn" style="color:var(--mut)" onclick="addWater(-1)">âˆ’ Remove</button>
+            </div>
+          </div>
+          <div class="card"><div class="card-t"><span class="ac">ðŸ’§</span> Hydration Intel</div><div id="water-tips"></div></div>
+        </div>
+      </div>
+
+      <!-- â”€â”€ ANALYTICS â”€â”€ -->
+      <div class="page" id="page-analytics">
+        <div class="sec-hdr"><div class="sec-title">ANALYTICS<small>PERFORMANCE DATA</small></div><span style="font-size:9px;color:var(--mut);letter-spacing:2px">LAST 7 DAYS</span></div>
+        <div class="stats-row" style="margin-bottom:16px">
+          <div class="sc" style="--c:var(--red)"><div class="lb">Best Streak</div><div class="vl" id="an-streak">0</div><div class="sb">days</div></div>
+          <div class="sc" style="--c:var(--bl3)"><div class="lb">Avg Habits</div><div class="vl" id="an-avg">0%</div><div class="sb">this week</div></div>
+          <div class="sc" style="--c:var(--gld)"><div class="lb">Workouts</div><div class="vl" id="an-wk">0</div><div class="sb">total</div></div>
+          <div class="sc" style="--c:var(--prp)"><div class="lb">Avg Water</div><div class="vl" id="an-water">0</div><div class="sb">gl/day</div></div>
+        </div>
+        <div class="g2">
+          <div class="card"><div class="card-t"><span class="ac">ðŸ“ˆ</span> Habit Completion</div><div class="chart-wrap"><canvas id="ch-habits"></canvas></div></div>
+          <div class="card"><div class="card-t"><span class="ac">ðŸ’§</span> Water Intake</div><div class="chart-wrap"><canvas id="ch-water"></canvas></div></div>
+          <div class="card"><div class="card-t"><span class="ac">ðŸ”¥</span> Calories</div><div class="chart-wrap"><canvas id="ch-cal"></canvas></div></div>
+          <div class="card"><div class="card-t"><span class="ac">âš¡</span> Performance Score</div><div class="chart-wrap"><canvas id="ch-score"></canvas></div></div>
+        </div>
+      </div>
+
+      <!-- â”€â”€ HISTORY â”€â”€ -->
+      <div class="page" id="page-history">
+        <div class="sec-hdr">
+          <div class="sec-title">HISTORY<small>PAST PERFORMANCE</small></div>
+          <div class="row">
+            <button class="btn sec" style="padding:6px 12px" onclick="changeMonth(-1)">â€¹</button>
+            <span id="hist-month" style="font-family:var(--fd);font-size:12px;letter-spacing:2px;min-width:158px;text-align:center"></span>
+            <button class="btn sec" style="padding:6px 12px" onclick="changeMonth(1)">â€º</button>
+          </div>
+        </div>
+        <div class="stats-row" style="margin-bottom:16px">
+          <div class="sc" style="--c:var(--red)"><div class="lb">Avg Score</div><div class="vl" id="hist-sc">--</div><div class="sb">this month</div></div>
+          <div class="sc" style="--c:var(--bl3)"><div class="lb">Perfect Days</div><div class="vl" id="hist-pf">0</div><div class="sb">100% habits</div></div>
+          <div class="sc" style="--c:var(--prp)"><div class="lb">Avg Water</div><div class="vl" id="hist-wt">0</div><div class="sb">gl/day</div></div>
+          <div class="sc" style="--c:var(--gld)"><div class="lb">Avg Cal</div><div class="vl" id="hist-cl">0</div><div class="sb">kcal/day</div></div>
+        </div>
+        <div class="card" style="margin-bottom:13px">
+          <div class="card-t"><span class="ac">ðŸ“…</span> Monthly Calendar</div>
+          <div id="hist-hdr" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:7px"></div>
+          <div id="hist-cal"></div>
+          <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap">
+            <span style="font-size:10px;color:var(--mut);display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:var(--red);border-radius:3px;display:inline-block"></span>Perfect</span>
+            <span style="font-size:10px;color:var(--mut);display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:rgba(230,51,41,.22);border-radius:3px;display:inline-block"></span>Partial</span>
+            <span style="font-size:10px;color:var(--mut);display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:rgba(255,255,255,.05);border:1px solid var(--br);border-radius:3px;display:inline-block"></span>No data</span>
+          </div>
+        </div>
+        <div class="card" id="hist-detail" style="display:none">
+          <div class="card-t"><span class="ac">ðŸ“‹</span> <span id="hist-detail-date"></span></div>
+          <div class="g3" id="hist-detail-stats" style="margin-bottom:12px"></div>
+          <div id="hist-detail-habits"></div>
+        </div>
+      </div>
+
+      <!-- â”€â”€ ACCOUNT â”€â”€ -->
+      <div class="page" id="page-account">
+        <div class="sec-hdr"><div class="sec-title">ACCOUNT<small>CLOUD SYNC</small></div><span class="badge b-lck" id="sync-badge">OFFLINE</span></div>
+        <div id="auth-panel">
+          <div class="g2">
+            <div class="card">
+              <div class="card-t"><span class="ac">ðŸ”‘</span> Sign In / Register</div>
+              <p style="font-size:12px;color:var(--mut);margin-bottom:15px;line-height:1.7;font-weight:500">Sign in to sync your data across all devices securely.</p>
+              <div class="modal-row"><div class="modal-lbl">Email</div><input type="email" class="inp" id="auth-email" placeholder="you@email.com"></div>
+              <div class="modal-row"><div class="modal-lbl">Password</div><input type="password" class="inp" id="auth-pw" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"></div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px">
+                <button class="btn" onclick="authSignIn()">SIGN IN</button>
+                <button class="btn blu" onclick="authRegister()">REGISTER</button>
+              </div>
+              <button class="btn sec" onclick="authGoogle()" style="width:100%">ðŸ”µ CONTINUE WITH GOOGLE</button>
+              <div id="auth-err" style="display:none;color:var(--red);font-size:11px;margin-top:9px;padding:8px 11px;background:rgba(230,51,41,.07);border:1px solid rgba(230,51,41,.18);border-radius:6px"></div>
+            </div>
+            <div class="card">
+              <div class="card-t"><span class="ac">â˜ï¸</span> Why Sign In?</div>
+              <div class="auth-feat"><div style="font-size:20px">ðŸ“±</div><div><div style="font-size:12px;font-weight:700;margin-bottom:2px">Any Device</div><div style="font-size:11px;color:var(--mut)">Data follows you everywhere.</div></div></div>
+              <div class="auth-feat"><div style="font-size:20px">ðŸ”’</div><div><div style="font-size:12px;font-weight:700;margin-bottom:2px">Secure</div><div style="font-size:11px;color:var(--mut)">Only you can access via Firebase.</div></div></div>
+              <div class="auth-feat"><div style="font-size:20px">ðŸ’¾</div><div><div style="font-size:12px;font-weight:700;margin-bottom:2px">Never Lose Data</div><div style="font-size:11px;color:var(--mut)">Full history backed up.</div></div></div>
+              <div class="auth-feat"><div style="font-size:20px">âš¡</div><div><div style="font-size:12px;font-weight:700;margin-bottom:2px">Works Offline</div><div style="font-size:11px;color:var(--mut)">Syncs when you reconnect.</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div id="profile-panel" style="display:none">
+          <div class="g2">
+            <div class="card">
+              <div class="card-t"><span class="ac">â—‰</span> Profile</div>
+              <div style="display:flex;align-items:center;gap:13px;margin-bottom:18px">
+                <div id="user-av" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--red),#c0392b);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:26px;color:#fff;box-shadow:0 0 18px rgba(230,51,41,.38)"></div>
+                <div><div id="user-nm" style="font-size:16px;font-weight:700"></div><div id="user-em" style="font-size:11px;color:var(--mut)"></div><div id="last-sync" style="font-size:10px;color:var(--grn);margin-top:2px"></div></div>
+              </div>
+              <div class="stk">
+                <button class="btn" onclick="syncCloud()" style="width:100%">â˜ SYNC NOW</button>
+                <button class="btn blu" onclick="loadCloud()" style="width:100%">â¬‡ LOAD FROM CLOUD</button>
+                <button class="btn dng" onclick="authSignOut()" style="width:100%">SIGN OUT</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-t"><span class="ac">ðŸ“Š</span> Cloud Stats</div>
+              <div id="cloud-stats"></div>
+              <div class="divider"></div>
+              <div class="tgl-row"><label class="tgl"><input type="checkbox" id="auto-sync" onchange="toggleAutoSync(this.checked)" checked><span class="tgl-sl"></span></label><span class="tgl-lb">Auto-sync on changes</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- â”€â”€ SETTINGS â”€â”€ -->
+      <div class="page" id="page-settings">
+        <div class="sec-hdr">
+          <div class="sec-title">SETTINGS<small>AI COACH & PREFERENCES</small></div>
+          <span class="badge" id="key-status-badge" style="background:rgba(255,255,255,.05);color:var(--mut);border:1px solid var(--br)">NO KEY</span>
+        </div>
+
+        <!-- API KEY CARD -->
+        <div class="card" style="margin-bottom:14px;border-color:rgba(230,51,41,.22)">
+          <div class="card-t"><span class="ac">ðŸ”‘</span> Claude API Key â€” AI Coach</div>
+
+          <!-- How it works info strip -->
+          <div style="background:rgba(0,176,255,.06);border:1px solid rgba(0,176,255,.18);border-radius:10px;padding:13px 15px;margin-bottom:18px;display:flex;gap:13px;align-items:flex-start">
+            <span style="font-size:22px;flex-shrink:0">ðŸ”’</span>
+            <div>
+              <div style="font-family:var(--fd);font-size:11px;font-weight:700;color:var(--bl3);letter-spacing:1px;margin-bottom:4px">100% PRIVATE â€” STORED ON YOUR DEVICE ONLY</div>
+              <div style="font-size:12px;color:var(--mut);line-height:1.7;font-weight:500">Your API key is saved in your browser's localStorage. It <strong style="color:var(--wht)">never appears in the code</strong>, never gets uploaded to GitHub, and is never sent anywhere except directly to Anthropic's servers when you use the AI Coach.</div>
+            </div>
+          </div>
+
+          <!-- Key input area -->
+          <div style="margin-bottom:16px">
+            <label class="lbl-small">YOUR CLAUDE API KEY</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="password" class="inp" id="api-key-input" placeholder="sk-ant-api03-..." style="font-family:monospace;letter-spacing:1px;flex:1" oninput="updateKeyStatus()">
+              <button class="btn" onclick="saveApiKey()" style="white-space:nowrap;flex-shrink:0">SAVE KEY</button>
+            </div>
+            <div id="key-feedback" style="margin-top:8px;font-size:12px;display:none"></div>
+          </div>
+
+          <!-- Show/hide toggle -->
+          <div class="tgl-row" style="margin-bottom:16px">
+            <label class="tgl"><input type="checkbox" id="show-key-toggle" onchange="toggleShowKey(this.checked)"><span class="tgl-sl"></span></label>
+            <span class="tgl-lb">Show key while typing</span>
+          </div>
+
+          <!-- Current key status -->
+          <div id="key-current-status" style="padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:10px;margin-bottom:16px">
+            <div style="font-size:10px;color:var(--mut);letter-spacing:1.5px;font-family:var(--fd);margin-bottom:5px">CURRENT STATUS</div>
+            <div id="key-stored-display" style="font-size:13px;font-weight:600"></div>
+          </div>
+
+          <!-- Remove key button -->
+          <button class="btn dng" id="remove-key-btn" onclick="removeApiKey()" style="display:none">🗑 REMOVE SAVED KEY</button>
+        </div>
+
+        <!-- AUDIO ENGINE CARD -->
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-t"><span class="ac">🎵</span> Audio Engine System</div>
+          <div class="tgl-row" style="margin-bottom:12px">
+            <label class="tgl"><input type="checkbox" id="audio-toggle" onchange="saveAudioSettings()" checked><span class="tgl-sl"></span></label>
+            <span class="tgl-lb" style="color:var(--wht);font-weight:700">Enable Sound Effects</span>
+          </div>
+          <div style="margin-bottom:10px">
+            <label class="lbl-small">SOUND EFFECTS PACK</label>
+            <select class="inp" id="audio-pack" onchange="saveAudioSettings()">
+              <option value="scifi" selected>Sci-Fi Cyberpunk (Default)</option>
+              <option value="minimal">Minimalist UI</option>
+            </select>
+          </div>
+          <p style="font-size:11px;color:var(--mut);line-height:1.5;margin-top:6px">The audio engine synthesizes butter-smooth UI sounds using your device's native Web Audio API.</p>
+        </div>
+
+        <!-- HOW TO GET KEY CARD -->
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-t"><span class="ac">ðŸ“–</span> How to Get Your API Key (Free)</div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--br);align-items:flex-start">
+              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--red),#c0392b);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:700;color:#fff;flex-shrink:0">1</div>
+              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Go to console.anthropic.com</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Create a free Anthropic account if you don't have one.</div></div>
+            </div>
+            <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--br);align-items:flex-start">
+              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--red),#c0392b);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:700;color:#fff;flex-shrink:0">2</div>
+              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Click "API Keys" in the sidebar</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Then click "Create Key" â€” give it any name like "SPIDER OS".</div></div>
+            </div>
+            <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--br);align-items:flex-start">
+              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--red),#c0392b);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:700;color:#fff;flex-shrink:0">3</div>
+              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Copy the key</div><div style="font-size:11px;color:var(--mut);line-height:1.6">It starts with <span style="font-family:monospace;color:var(--bl3);font-size:11px">sk-ant-</span> â€” copy the whole thing. You only see it once!</div></div>
+            </div>
+            <div style="display:flex;gap:14px;padding:13px 0;align-items:flex-start">
+              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--grn),#00c853);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:700;color:#000;flex-shrink:0">4</div>
+              <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Paste it above and click Save</div><div style="font-size:11px;color:var(--mut);line-height:1.6">Your AI Coach activates instantly. Anthropic gives ~$5 free credits to start.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECURITY EXPLAINER CARD -->
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-t"><span class="ac">ðŸ›¡</span> Security Explained</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--br)">
+              <span style="font-size:18px">âœ…</span>
+              <div><div style="font-size:12px;font-weight:700;margin-bottom:2px;color:var(--grn)">Stored only on this device</div><div style="font-size:11px;color:var(--mut);line-height:1.5">Saved in your browser localStorage â€” same place as all your app data.</div></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--br)">
+              <span style="font-size:18px">âœ…</span>
+              <div><div style="font-size:12px;font-weight:700;margin-bottom:2px;color:var(--grn)">Never in GitHub code</div><div style="font-size:11px;color:var(--mut);line-height:1.5">The app code on GitHub has zero keys. Anyone who downloads your app must use their own key.</div></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--br)">
+              <span style="font-size:18px">âœ…</span>
+              <div><div style="font-size:12px;font-weight:700;margin-bottom:2px;color:var(--grn)">Direct to Anthropic only</div><div style="font-size:11px;color:var(--mut);line-height:1.5">Requests go from your browser â†’ Anthropic's API. No middleman, no logging.</div></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0">
+              <span style="font-size:18px">âš ï¸</span>
+              <div><div style="font-size:12px;font-weight:700;margin-bottom:2px;color:var(--gld)">Don't use on shared devices</div><div style="font-size:11px;color:var(--mut);line-height:1.5">Anyone with access to this browser on this device could see localStorage. Keep it personal.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- APP INFO -->
+        <div class="card">
+          <div class="card-t"><span class="ac">â„¹ï¸</span> App Info</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:9px;padding:12px;text-align:center">
+              <div style="font-family:var(--fh);font-size:22px;color:var(--red)">SPIDER OS</div>
+              <div style="font-size:9px;color:var(--mut);letter-spacing:1.5px;margin-top:3px">PERFORMANCE MULTIVERSE</div>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:9px;padding:12px;text-align:center">
+              <div style="font-family:var(--fh);font-size:22px;color:var(--bl3)" id="settings-habit-count">--</div>
+              <div style="font-size:9px;color:var(--mut);letter-spacing:1.5px;margin-top:3px">DAYS TRACKED</div>
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn dng" onclick="clearAllData()" style="width:100%;font-size:10px">ðŸ—‘ CLEAR ALL APP DATA</button>
+          </div>
+        </div>
+      </div>
+      <!-- end settings page -->
+
+    </main>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     AI COACH PANEL
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div id="coach-panel">
+  <div class="coach-box">
+    <div class="coach-hdr">
+      <div class="coach-avatar">ðŸ•·ï¸</div>
+      <div class="coach-info">
+        <div class="coach-name">SPIDER AI COACH</div>
+        <div class="coach-status">ONLINE Â· ANALYZING YOUR DATA</div>
+      </div>
+      <button class="coach-close" onclick="toggleCoach()">Ã—</button>
+    </div>
+    <div class="coach-msgs" id="coach-msgs">
+      <div class="typing-ind" id="typing-ind">
+        <div class="type-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+    <div class="quick-chips">
+      <button class="qc" onclick="quickAsk('Analyze my progress today and give me specific improvements')">ðŸ“Š ANALYZE TODAY</button>
+      <button class="qc" onclick="quickAsk('Review my workout and tell me if I should increase weight, reps, or change any exercises')">ðŸ’ª WORKOUT REVIEW</button>
+      <button class="qc" onclick="quickAsk('Analyze my nutrition and suggest specific food changes or additions')">ðŸ¥— NUTRITION TIPS</button>
+      <button class="qc" onclick="quickAsk('Which habits should I add, remove or change based on my goals?')">âœ“ HABIT ADVICE</button>
+      <button class="qc" onclick="quickAsk('Give me a full overall performance review with specific action steps')">âš¡ FULL REVIEW</button>
+      <button class="qc" onclick="quickAsk('Based on my progress, should I change my workout split or plan?')">ðŸ“‹ PLAN CHECK</button>
+    </div>
+    <div class="coach-input-row">
+      <textarea class="coach-inp" id="coach-inp" placeholder="Ask your AI coach anything..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+      <button class="coach-send" onclick="sendMsg()">âž¤</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="coach-fab" id="coach-fab" onclick="toggleCoach()">
+  ðŸ•·ï¸<span class="fab-badge" id="fab-badge">!</span>
+</button>
+
+<!-- ALERTS -->
+<div id="alert-zone"></div>
+
+<!-- MODALS -->
+<div class="modal-ov" id="add-habit-modal">
+  <div class="modal">
+    <h3>ADD HABIT</h3>
+    <div class="modal-row"><div class="modal-lbl">Name</div><input type="text" class="inp" id="mh-name" placeholder="e.g. Morning Run..."></div>
+    <div class="modal-row"><div class="modal-lbl">Category</div>
+      <select class="inp" id="mh-cat">
+        <option value="health">Health</option><option value="gym">Gym ðŸ‹ï¸</option>
+        <option value="mindset">Mindset</option><option value="productivity">Productivity</option>
+        <option value="nutrition">Nutrition</option><option value="sleep">Sleep</option><option value="other">Other</option>
+      </select>
+    </div>
+    <div class="modal-row"><div class="modal-lbl">Emoji</div><input type="text" class="inp" id="mh-emoji" placeholder="ðŸƒ" maxlength="2" style="width:78px"></div>
+    <div class="modal-actions"><button class="btn" onclick="confirmAddHabit()">ADD HABIT</button><button class="btn sec" onclick="closeModal('add-habit-modal')">CANCEL</button></div>
+  </div>
+</div>
+
+<div class="modal-ov" id="add-ex-modal">
+  <div class="modal">
+    <h3>ADD EXERCISE</h3>
+    <div class="modal-row"><div class="modal-lbl">Name</div><input type="text" class="inp" id="me-name" placeholder="e.g. Bench Press"></div>
+    <div class="modal-row"><div class="modal-lbl">Muscle Group</div>
+      <select class="inp" id="me-grp">
+        <option>Chest</option><option>Back</option><option>Shoulders</option>
+        <option>Biceps</option><option>Triceps</option><option>Legs</option><option>Core</option><option>Cardio</option>
+      </select>
+    </div>
+    <div class="modal-row"><div class="modal-lbl">Starting Sets</div>
+      <select class="inp" id="me-sets"><option>1</option><option>2</option><option value="3" selected>3</option><option>4</option><option>5</option></select>
+    </div>
+    <div class="modal-actions"><button class="btn" onclick="confirmAddEx()">ADD</button><button class="btn sec" onclick="closeModal('add-ex-modal')">CANCEL</button></div>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

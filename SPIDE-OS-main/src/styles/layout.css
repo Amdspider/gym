@@ -1,0 +1,86 @@
+/* ═══════════════════════════════════════════════════════
+   LAYOUT & STRUCTURAL SHELL
+═══════════════════════════════════════════════════════ */
+/* LAYOUT HELPERS */
+.layout { display:flex; min-height:100vh; position:relative; z-index:2; }
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:13px; }
+.stk { display:flex; flex-direction:column; gap:13px; }
+.row { display:flex; align-items:center; gap:10px; }
+.divider { height:1px; background:var(--br); margin:13px 0; }
+.main { flex:1; padding:26px 28px; max-width:1300px; }
+
+/* SIDEBAR */
+.sidebar {
+  width:68px;
+  background:linear-gradient(180deg,rgba(230,51,41,.09),rgba(8,13,26,.97));
+  border-right:1px solid rgba(230,51,41,.18);
+  display:flex; flex-direction:column; align-items:center;
+  padding:max(24px,env(safe-area-inset-top,24px)) 0 env(safe-area-inset-bottom,20px);
+  position:sticky; top:0; height:100svh; flex-shrink:0; backdrop-filter:blur(18px);
+}
+.sb-logo {
+  font-family:var(--fh);font-size:10px;letter-spacing:3px;color:var(--red);
+  writing-mode:vertical-rl;transform:rotate(180deg) translateZ(0);margin-bottom:18px;
+  text-shadow:0 0 15px var(--rdg);
+}
+.sb-web { width:32px; height:32px; margin-bottom:16px; animation:webSpin 20s linear infinite; }
+@keyframes webSpin { to { transform:rotate(360deg) translateZ(0) } }
+
+.nb {
+  width:44px; height:44px; border:1px solid transparent; background:transparent;
+  border-radius:11px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:17px; color:var(--mut); transition:all .22s; position:relative; margin:2px 0;
+}
+.nb:hover { background:rgba(230,51,41,.1); border-color:rgba(230,51,41,.28); color:var(--wht); transform:translateX(2px) translateZ(0); }
+.nb.act { background:linear-gradient(135deg,rgba(230,51,41,.22),rgba(41,121,255,.12)); border-color:rgba(230,51,41,.48); color:var(--red); }
+.nb.act::before {
+  content:''; position:absolute; left:-1px; top:50%; transform:translateY(-50%);
+  width:3px; height:22px; background:var(--red); border-radius:0 3px 3px 0; box-shadow:0 0 10px var(--red);
+}
+.nb .tip {
+  position:absolute; left:56px; background:rgba(4,6,15,.96); border:1px solid rgba(230,51,41,.28);
+  color:var(--wht); font-size:9px; font-family:var(--fb); font-weight:700; padding:5px 10px;
+  border-radius:6px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .18s;
+  letter-spacing:1.5px; text-transform:uppercase; z-index:9000;
+}
+.nb:hover .tip { opacity:1; }
+.sb-bot { margin-top:auto; display:flex; flex-direction:column; align-items:center; gap:2px; }
+
+/* HEADER */
+.hdr {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  margin-bottom:30px; padding-bottom:18px; border-bottom:1px solid transparent;
+  border-image:linear-gradient(90deg,var(--red),transparent 45%,var(--bl2) 72%,transparent) 1;
+}
+.hdr-title { font-family:var(--fh); font-size:clamp(38px,5vw,62px); line-height:.88; letter-spacing:4px; }
+.hdr-title .sp { color:var(--red); text-shadow:0 0 30px var(--rdg); }
+.hdr-title .os { color:var(--bl3); font-size:.6em; text-shadow:0 0 20px rgba(0,176,255,.55); }
+.hdr-title .vrs {
+  display:block; font-size:10px; letter-spacing:8px; color:var(--mut);
+  font-family:var(--fd); font-weight:400; margin-top:5px;
+}
+.hdr-r { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.date-box {
+  background:rgba(8,13,26,.82); border:1px solid rgba(230,51,41,.22);
+  border-radius:10px; padding:7px 15px; text-align:right; backdrop-filter:blur(10px);
+}
+.date-box .dy { font-family:var(--fd); font-size:9px; color:var(--red); letter-spacing:2px; }
+.date-box .dt { font-family:var(--fh); font-size:15px; }
+
+.sec-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.sec-title { font-family:var(--fh); font-size:30px; letter-spacing:3px; }
+.sec-title small {
+  display:block; font-family:var(--fd); font-size:9px; letter-spacing:4px;
+  color:var(--red); font-weight:400; margin-top:2px;
+}
+
+/* RESPONSIVE LAYOUT */
+@media(max-width:768px){
+  .main{padding:12px 10px}
+  .g2,.g3{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+  .sidebar{width:52px}.nb{width:38px;height:38px}
+  .hdr-title{font-size:34px}
+}
