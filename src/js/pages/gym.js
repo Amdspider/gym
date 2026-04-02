@@ -1,241 +1,284 @@
 // ═══════════════════════════════════════════════════════
-//   GYM MODULE - Workout Tracking & Templates
+//   GYM MODULE — Workouts, Exercises, Tracking
 // ═══════════════════════════════════════════════════════
 import { Store } from '../state/store.js';
 import { AudioEngine } from '../ui/audio.js';
 
-const TEMPLATES = {
-  push: [
-    { name: 'Bench Press', grp: 'Chest', sets: 4 },
-    { name: 'Incline Dumbbell Press', grp: 'Chest', sets: 3 },
-    { name: 'Overhead Press', grp: 'Shoulders', sets: 3 },
-    { name: 'Lateral Raises', grp: 'Shoulders', sets: 3 },
-    { name: 'Tricep Pushdowns', grp: 'Triceps', sets: 3 },
-    { name: 'Overhead Tricep Extension', grp: 'Triceps', sets: 3 },
-  ],
-  pull: [
-    { name: 'Barbell Rows', grp: 'Back', sets: 4 },
-    { name: 'Lat Pulldowns', grp: 'Back', sets: 3 },
-    { name: 'Face Pulls', grp: 'Back', sets: 3 },
-    { name: 'Barbell Curls', grp: 'Biceps', sets: 3 },
-    { name: 'Hammer Curls', grp: 'Biceps', sets: 3 },
-  ],
-  legs: [
-    { name: 'Squats', grp: 'Legs', sets: 4 },
-    { name: 'Romanian Deadlift', grp: 'Legs', sets: 3 },
-    { name: 'Leg Press', grp: 'Legs', sets: 3 },
-    { name: 'Leg Curls', grp: 'Legs', sets: 3 },
-    { name: 'Calf Raises', grp: 'Legs', sets: 4 },
-  ],
-  full: [
-    { name: 'Squats', grp: 'Legs', sets: 3 },
-    { name: 'Bench Press', grp: 'Chest', sets: 3 },
-    { name: 'Barbell Rows', grp: 'Back', sets: 3 },
-    { name: 'Overhead Press', grp: 'Shoulders', sets: 3 },
-    { name: 'Barbell Curls', grp: 'Biceps', sets: 2 },
-    { name: 'Tricep Pushdowns', grp: 'Triceps', sets: 2 },
-  ],
-};
-
 export const Gym = {
   init() {
-    window.loadTpl      = (type) => this.loadTemplate(type);
-    window.addExModal    = () => this.openAddExModal();
-    window.confirmAddEx  = () => this.confirmAddExercise();
+    window.loadTpl = (type) => this.loadTemplate(type);
+    window.addExModal = () => this.openModal();
+    window.confirmAddEx = () => this.confirmAdd();
+    window.logSet = (id, setIdx, weightId, repsId) => this.logSet(id, setIdx, weightId, repsId);
+    window.removeExercise = (id) => this.removeExercise(id);
+    
+    document.addEventListener('store:changed', () => this.render());
+    document.addEventListener('nav:changed', (e) => {
+      if(e.detail.page === 'gym') this.render();
+    });
 
-    document.addEventListener('store:changed', () => this.renderAll());
-    this.renderAll();
+    this.render();
   },
 
-  renderAll() {
+  render() {
+    this.checkLock();
     this.renderExercises();
-    this.renderSessionSummary();
+    this.renderSummary();
     this.renderPRs();
   },
 
-  // ─────────────────────────────────────────────────────
-  //  LOAD WORKOUT TEMPLATE
-  // ─────────────────────────────────────────────────────
-  loadTemplate(type) {
-    const tpl = TEMPLATES[type];
-    if (!tpl) return;
+  checkLock() {
+    const isGymDone = Store.data.todayDone.some(id => {
+      const h = Store.data.habits.find(hx => hx.id === id);
+      return h && h.cat === 'gym';
+    });
+    
+    const lock = document.getElementById('gym-lock');
+    const act = document.getElementById('gym-active');
+    const badge = document.getElementById('gym-badge');
+    
+    if(!lock || !act || !badge) return;
 
-    Store.data.exercises = tpl.map((ex, i) => ({
-      id: Date.now() + i,
+    if (isGymDone) {
+      lock.style.display = 'none';
+      act.style.display = 'block';
+      badge.textContent = 'UNLOCKED';
+      badge.className = 'badge b-act';
+    } else {
+      lock.style.display = 'block';
+      act.style.display = 'none';
+      badge.textContent = 'LOCKED';
+      badge.className = 'badge b-lck';
+    }
+  },
+
+  loadTemplate(type) {
+    if(Store.data.exercises && Store.data.exercises.length > 0) {
+      if(!confirm("This will clear your current session. Load template?")) return;
+    }
+    
+    let template = [];
+    if(type === 'push') {
+      template = [
+        {name:"Bench Press", grp:"Chest", totalSets:4},
+        {name:"Overhead Press", grp:"Shoulders", totalSets:3},
+        {name:"Incline DB Press", grp:"Chest", totalSets:3},
+        {name:"Tricep Pushdown", grp:"Triceps", totalSets:3}
+      ];
+    } else if(type === 'pull') {
+      template = [
+        {name:"Deadlift", grp:"Back", totalSets:4},
+        {name:"Pull-Ups", grp:"Back", totalSets:3},
+        {name:"Barbell Row", grp:"Back", totalSets:3},
+        {name:"Bicep Curls", grp:"Biceps", totalSets:3}
+      ];
+    } else if(type === 'legs') {
+      template = [
+        {name:"Squat", grp:"Legs", totalSets:4},
+        {name:"Leg Press", grp:"Legs", totalSets:3},
+        {name:"Leg Extensions", grp:"Legs", totalSets:3},
+        {name:"Calf Raises", grp:"Legs", totalSets:4}
+      ];
+    } else if(type === 'full') {
+      template = [
+        {name:"Squat", grp:"Legs", totalSets:3},
+        {name:"Bench Press", grp:"Chest", totalSets:3},
+        {name:"Barbell Row", grp:"Back", totalSets:3},
+        {name:"Overhead Press", grp:"Shoulders", totalSets:3}
+      ];
+    }
+
+    const exIdBase = Date.now();
+    Store.data.exercises = template.map((ex, i) => ({
+      id: exIdBase + i,
       name: ex.name,
       grp: ex.grp,
-      sets: Array.from({ length: ex.sets }, (_, si) => ({
-        id: si + 1,
-        weight: '',
-        reps: '',
-        done: false
-      }))
+      sets: Array(ex.totalSets).fill({ w: '', r: '', done: false })
     }));
+    
     Store.saveLocal();
     AudioEngine.play('success');
   },
 
-  // ─────────────────────────────────────────────────────
-  //  RENDER EXERCISE LIST
-  // ─────────────────────────────────────────────────────
   renderExercises() {
-    const el = document.getElementById('ex-list');
-    if (!el) return;
+    const list = document.getElementById('ex-list');
+    if(!list) return;
 
-    const exercises = Store.data.exercises || [];
-    if (exercises.length === 0) {
-      el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--mut);font-size:12px">Select a template or add exercises manually.</div>`;
+    const exs = Store.data.exercises || [];
+    
+    if(exs.length === 0) {
+      list.innerHTML = `<div style="text-align:center;color:var(--mut);font-size:12px;padding:20px;border:1px dashed var(--br2);border-radius:10px">No exercises in this session. Add one or load a template.</div>`;
       return;
     }
 
-    el.innerHTML = exercises.map((ex, ei) => `
+    list.innerHTML = exs.map(ex => {
+      let doneCount = ex.sets.filter(s => s.done).length;
+      let allDone = doneCount === ex.sets.length;
+      let vol = ex.sets.reduce((s, set) => s + (set.done ? ((parseFloat(set.w)||0) * (parseFloat(set.r)||0)) : 0), 0);
+      
+      const pr = Store.data.prs && Store.data.prs[ex.name.toLowerCase()] || {w:0, r:0};
+
+      return `
       <div class="ex-card">
         <div class="ex-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
           <div>
-            <div class="ex-nm">${ex.name}</div>
-            <div class="ex-mt">${ex.grp}</div>
+            <div class="ex-nm">${ex.name} ${allDone ? '<span style="color:var(--grn);font-size:11px;margin-left:4px">✓ DONE</span>' : ''}</div>
+            <div class="ex-mt">${ex.grp} • ${ex.sets.length} SETS${vol > 0 ? ` • <span style="color:var(--gld)">${vol}kg VOL</span>` : ''}</div>
           </div>
-          <div style="font-size:11px;color:var(--mut)">${ex.sets.filter(s => s.done).length}/${ex.sets.length} sets</div>
+          <button style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer" onclick="event.stopPropagation(); window.removeExercise(${ex.id})">✕</button>
         </div>
-        <div class="ex-body">
+        <div class="ex-body" style="display:${allDone ? 'none' : 'block'}">
+          <div style="font-size:9px;color:var(--bl3);margin-bottom:8px;font-weight:700">PR: ${pr.w}kg x ${pr.r}</div>
           <table class="sets-tbl">
-            <thead><tr><th>SET</th><th>WEIGHT (KG)</th><th>REPS</th><th></th></tr></thead>
-            <tbody>
-              ${ex.sets.map((s, si) => `
-                <tr>
-                  <td style="font-size:12px;font-weight:700;color:var(--mut)">${s.id}</td>
-                  <td><input class="set-inp" type="number" placeholder="0" value="${s.weight || ''}" onchange="window.updateSet(${ei},${si},'weight',this.value)"></td>
-                  <td><input class="set-inp" type="number" placeholder="0" value="${s.reps || ''}" onchange="window.updateSet(${ei},${si},'reps',this.value)"></td>
-                  <td><button class="set-btn ${s.done ? 'done' : ''}" onclick="window.toggleSet(${ei},${si})">${s.done ? '✓' : 'LOG'}</button></td>
-                </tr>`).join('')}
-            </tbody>
+            <tr><th>Set</th><th>Weight (kg)</th><th>Reps</th><th></th></tr>
+            ${ex.sets.map((set, sIdx) => `
+              <tr>
+                <td style="font-size:11px;color:var(--mut);font-weight:700">${sIdx + 1}</td>
+                <td><input type="number" class="set-inp" id="w_${ex.id}_${sIdx}" value="${set.w || ''}" placeholder="0" ${set.done?'disabled':''}></td>
+                <td><input type="number" class="set-inp" id="r_${ex.id}_${sIdx}" value="${set.r || ''}" placeholder="0" ${set.done?'disabled':''}></td>
+                <td><button class="set-btn ${set.done?'done':''}" onclick="logSet(${ex.id},${sIdx},'w_${ex.id}_${sIdx}','r_${ex.id}_${sIdx}')">${set.done?'✓':'LOG'}</button></td>
+              </tr>
+            `).join('')}
           </table>
-          <button class="add-set-btn" onclick="window.addSet(${ei})">+ ADD SET</button>
+          <button class="add-set-btn" onclick="window.addSet(${ex.id})">+ ADD SET</button>
         </div>
-        <button style="position:absolute;top:10px;right:10px;background:none;border:none;color:var(--mut);cursor:pointer;font-size:14px" onclick="window.removeExercise(${ei})">✕</button>
-      </div>`).join('');
+      </div>
+      `;
+    }).join('');
 
-    // Wire set controls
-    window.updateSet = (ei, si, field, val) => {
-      Store.data.exercises[ei].sets[si][field] = parseFloat(val) || '';
-      Store.saveLocal();
-    };
-
-    window.toggleSet = (ei, si) => {
-      Store.data.exercises[ei].sets[si].done = !Store.data.exercises[ei].sets[si].done;
-      Store.saveLocal();
-      AudioEngine.play('toggle');
-    };
-
-    window.addSet = (ei) => {
-      const sets = Store.data.exercises[ei].sets;
-      sets.push({ id: sets.length + 1, weight: '', reps: '', done: false });
-      Store.saveLocal();
-      AudioEngine.play('click');
-    };
-
-    window.removeExercise = (ei) => {
-      Store.data.exercises.splice(ei, 1);
-      Store.saveLocal();
-      AudioEngine.play('click');
+    window.addSet = (exId) => {
+      const ex = Store.data.exercises.find(e => e.id === exId);
+      if(ex) {
+        ex.sets.push({w:'', r:'', done:false});
+        Store.saveLocal();
+        AudioEngine.play('click');
+      }
     };
   },
 
-  // ─────────────────────────────────────────────────────
-  //  SESSION SUMMARY
-  // ─────────────────────────────────────────────────────
-  renderSessionSummary() {
-    const el = document.getElementById('gym-sum');
-    if (!el) return;
+  logSet(exId, setIdx, wid, rid) {
+    const w = parseFloat(document.getElementById(wid).value) || 0;
+    const r = parseFloat(document.getElementById(rid).value) || 0;
+    
+    if(w === 0 || r === 0) {
+      alert("Enter weight and reps first!");
+      return;
+    }
 
-    const exercises = Store.data.exercises || [];
-    const totalSets = exercises.reduce((s, ex) => s + ex.sets.length, 0);
-    const doneSets = exercises.reduce((s, ex) => s + ex.sets.filter(s => s.done).length, 0);
-    const totalVol = exercises.reduce((s, ex) => s + ex.sets
-      .filter(s => s.done)
-      .reduce((v, s) => v + (parseFloat(s.weight) || 0) * (parseFloat(s.reps) || 0), 0), 0);
+    const ex = Store.data.exercises.find(e => e.id === exId);
+    if(ex && ex.sets[setIdx]) {
+      const isUndoing = ex.sets[setIdx].done;
+      ex.sets[setIdx] = { w, r, done: !isUndoing };
+      
+      // Update PR if it's a new record and not undoing
+      if(!isUndoing) {
+        if(!Store.data.prs) Store.data.prs = {};
+        const key = ex.name.toLowerCase();
+        const pr = Store.data.prs[key];
+        
+        // Simple PR logic (1RM estimate or pure weight)
+        const est1RM = w * (1 + (r / 30));
+        const prev1RM = pr ? (pr.w * (1 + (pr.r / 30))) : 0;
+        
+        if(!pr || est1RM > prev1RM) {
+          Store.data.prs[key] = { w, r, date: new Date().toISOString() };
+        }
+      }
 
-    el.innerHTML = `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div style="text-align:center;padding:10px;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:9px">
-          <div style="font-family:var(--fh);font-size:26px;color:var(--bl3)">${doneSets}/${totalSets}</div>
-          <div style="font-size:8px;color:var(--mut);letter-spacing:1px">SETS DONE</div>
-        </div>
-        <div style="text-align:center;padding:10px;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:9px">
-          <div style="font-family:var(--fh);font-size:26px;color:var(--gld)">${Math.round(totalVol)}</div>
-          <div style="font-size:8px;color:var(--mut);letter-spacing:1px">VOLUME (KG)</div>
-        </div>
-      </div>`;
+      Store.saveLocal();
+      AudioEngine.play(isUndoing ? 'click' : 'success');
+    }
   },
 
-  // ─────────────────────────────────────────────────────
-  //  PERSONAL RECORDS (PRs)
-  // ─────────────────────────────────────────────────────
-  renderPRs() {
-    const el = document.getElementById('pr-list');
-    if (!el) return;
+  removeExercise(id) {
+    if(confirm("Remove this exercise?")) {
+      Store.data.exercises = Store.data.exercises.filter(e => e.id !== id);
+      Store.saveLocal();
+      AudioEngine.play('click');
+    }
+  },
 
-    const prs = Store.data.prs || {};
-    const entries = Object.entries(prs);
+  renderSummary() {
+    const sum = document.getElementById('gym-sum');
+    if(!sum) return;
 
-    // Update PRs from current session
-    const exercises = Store.data.exercises || [];
-    exercises.forEach(ex => {
-      ex.sets.filter(s => s.done && s.weight).forEach(s => {
-        const w = parseFloat(s.weight) || 0;
-        if (!prs[ex.name] || w > prs[ex.name]) {
-          prs[ex.name] = w;
+    const exs = Store.data.exercises || [];
+    let totVol = 0;
+    let totSets = 0;
+
+    exs.forEach(ex => {
+      ex.sets.forEach(s => {
+        if(s.done) {
+          totSets++;
+          totVol += (parseFloat(s.w)||0) * (parseFloat(s.r)||0);
         }
       });
     });
 
-    const prEntries = Object.entries(prs);
-    if (prEntries.length === 0) {
-      el.innerHTML = `<div style="font-size:11px;color:var(--mut);text-align:center;padding:12px">Complete sets to record PRs</div>`;
+    sum.innerHTML = `
+      <div style="display:flex;gap:12px">
+        <div style="flex:1;text-align:center;padding:12px;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:10px">
+          <div style="font-family:var(--fh);font-size:24px;color:var(--gld)">${totVol}kg</div>
+          <div style="font-size:9px;color:var(--mut);letter-spacing:1px;margin-top:2px">TOTAL VOLUME</div>
+        </div>
+        <div style="flex:1;text-align:center;padding:12px;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:10px">
+          <div style="font-family:var(--fh);font-size:24px;color:var(--red)">${totSets}</div>
+          <div style="font-size:9px;color:var(--mut);letter-spacing:1px;margin-top:2px">WORKING SETS</div>
+        </div>
+      </div>
+    `;
+  },
+
+  renderPRs() {
+    const list = document.getElementById('pr-list');
+    if(!list) return;
+
+    const prs = Store.data.prs || {};
+    const keys = Object.keys(prs);
+
+    if(keys.length === 0) {
+      list.innerHTML = '<div style="font-size:11px;color:var(--mut);text-align:center">No PRs recorded yet. Keep pushing!</div>';
       return;
     }
 
-    el.innerHTML = prEntries.map(([name, weight]) => `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:7px;margin-bottom:5px">
-        <span style="font-size:12px;font-weight:700">${name}</span>
-        <span style="font-family:var(--fh);font-size:18px;color:var(--gld)">${weight}kg</span>
-      </div>`).join('');
+    list.innerHTML = keys.map(k => {
+      const pr = prs[k];
+      return `
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--br);font-size:12px">
+        <span style="color:var(--wht);text-transform:capitalize">${k}</span>
+        <span style="color:var(--gld);font-weight:700">${pr.w}kg x ${pr.r}</span>
+      </div>
+      `;
+    }).join('');
   },
 
-  // ─────────────────────────────────────────────────────
-  //  ADD EXERCISE MODAL
-  // ─────────────────────────────────────────────────────
-  openAddExModal() {
-    const modal = document.getElementById('add-ex-modal');
-    if (modal) {
-      modal.classList.add('open');
-      const nameInp = document.getElementById('me-name');
-      if (nameInp) { nameInp.value = ''; nameInp.focus(); }
-    }
+  openModal() {
+    const m = document.getElementById('add-ex-modal');
+    if(m) m.classList.add('open');
     AudioEngine.play('nav');
   },
 
-  confirmAddExercise() {
-    const name = document.getElementById('me-name')?.value.trim();
-    const grp = document.getElementById('me-grp')?.value || 'Chest';
-    const setsCount = parseInt(document.getElementById('me-sets')?.value) || 3;
+  confirmAdd() {
+    const name = document.getElementById('me-name').value.trim();
+    const grp = document.getElementById('me-grp').value;
+    const sets = parseInt(document.getElementById('me-sets').value) || 3;
 
-    if (!name) { alert('Enter an exercise name!'); return; }
+    if(!name) { alert("Enter exercise name"); return; }
 
-    if (!Store.data.exercises) Store.data.exercises = [];
+    if(!Store.data.exercises) Store.data.exercises = [];
+    
     Store.data.exercises.push({
       id: Date.now(),
       name,
       grp,
-      sets: Array.from({ length: setsCount }, (_, i) => ({
-        id: i + 1, weight: '', reps: '', done: false
-      }))
+      sets: Array(sets).fill({w:'', r:'', done:false})
     });
 
     Store.saveLocal();
     AudioEngine.play('success');
 
-    const modal = document.getElementById('add-ex-modal');
-    if (modal) modal.classList.remove('open');
+    document.getElementById('me-name').value = '';
+    const m = document.getElementById('add-ex-modal');
+    if(m) m.classList.remove('open');
   }
 };

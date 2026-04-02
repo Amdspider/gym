@@ -88,16 +88,50 @@
         <line x1="4"  y1="4"  x2="30" y2="30" stroke="rgba(230,51,41,.18)" stroke-width=".8"/>
         <line x1="30" y1="4"  x2="4"  y2="30" stroke="rgba(230,51,41,.18)" stroke-width=".8"/>
       </svg>
-      <button class="nb act" onclick="go('overview')"  id="nb-overview">⬡<span class="tip">Overview</span></button>
-      <button class="nb"     onclick="go('habits')"    id="nb-habits">✅<span class="tip">Habits</span></button>
-      <button class="nb"     onclick="go('gym')"       id="nb-gym">🏋️<span class="tip">Gym</span></button>
-      <button class="nb"     onclick="go('nutrition')" id="nb-nutrition">🥩<span class="tip">Nutrition</span></button>
-      <button class="nb"     onclick="go('water')"     id="nb-water">💧<span class="tip">Water</span></button>
-      <button class="nb"     onclick="go('analytics')" id="nb-analytics">📈<span class="tip">Analytics</span></button>
-      <button class="nb"     onclick="go('history')"   id="nb-history">🕒<span class="tip">History</span></button>
+      <button class="nb act" onclick="go('overview')"  id="nb-overview">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M12 3 2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+        <span class="tip">Overview</span>
+      </button>
+      <button class="nb"     onclick="go('habits')"    id="nb-habits">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <span class="tip">Habits</span>
+      </button>
+      <button class="nb"     onclick="go('gym')"       id="nb-gym">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
+        <span class="tip">Gym</span>
+      </button>
+      <button class="nb"     onclick="go('nutrition')" id="nb-nutrition">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-7v6H15v14h2.5v-5.25h1.5V2H16z"/></svg>
+        <span class="tip">Nutrition</span>
+      </button>
+      <button class="nb"     onclick="go('water')"     id="nb-water">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zM7.83 14c.37 0 .67.26.74.62 1.41 1.5 3.45 1.63 3.56 1.63.41 0 .75.34.75.75s-.34.75-.75.75c-.23 0-3.14-.15-4.94-2.07-.31-.33-.29-.85.04-1.16.15-.14.36-.22.56-.22z"/></svg>
+        <span class="tip">Water</span>
+      </button>
+      <button class="nb"     onclick="go('analytics')" id="nb-analytics">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M3 3v18h18V3H3zm6 14H7v-5h2v5zm4 0h-2v-3h2v3zm0-5h-2v-2h2v2zm4 5h-2V7h2v10z"/></svg>
+        <span class="tip">Analytics</span>
+      </button>
+      <button class="nb"     onclick="go('history')"   id="nb-history">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+        <span class="tip">History</span>
+      </button>
+      <button class="nb"     onclick="go('calendar')"  id="nb-calendar">
+        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        <span class="tip">Calendar</span>
+      </button>
       <div class="sb-bot">
-        <button class="nb"   onclick="go('account')"   id="nb-account">👤<span class="tip">Account</span></button>
-        <button class="nb"   onclick="go('settings')"  id="nb-settings">⚙️<span class="tip">Settings</span></button>
+        <button class="nb"   onclick="go('account')"   id="nb-account">
+          <div style="position:relative;">
+            <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            <span id="sb-status-dot" style="position:absolute;bottom:0;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--mut);border:1px solid #111;"></span>
+          </div>
+          <span class="tip">Account</span>
+        </button>
+        <button class="nb"   onclick="go('settings')"  id="nb-settings">
+          <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.49-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <span class="tip">Settings</span>
+        </button>
       </div>
     </nav>
 
@@ -116,8 +150,8 @@
             <div class="dy" id="today-dy">...</div>
             <div class="dt" id="today-dt">...</div>
           </div>
-          <button class="coach-hdr-btn" onclick="toggleCoach()">
-            <span class="pulse-dot"></span> AI COACH
+          <button class="coach-hdr-btn" onclick="toggleCoach()" id="coach-btn-hdr">
+            <span class="pulse-dot" id="coach-pulse"></span> AI COACH
           </button>
         </div>
       </div>
@@ -286,6 +320,33 @@
       <div class="page" id="page-history">
         <div class="sec-hdr"><div class="sec-title">HISTORY<small>YOUR JOURNEY</small></div></div>
         <div id="history-list" class="stk"></div>
+      </div>
+
+      <!-- ── CALENDAR ── -->
+      <div class="page" id="page-calendar">
+        <div class="sec-hdr">
+          <div class="sec-title">CALENDAR<small>MONTHLY OVERVIEW</small></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn sec" onclick="calToday()" style="padding:8px 12px">TODAY</button>
+          </div>
+        </div>
+        
+        <div id="cal-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px"></div>
+
+        <div class="g2">
+          <!-- Calendar Grid -->
+          <div class="card" style="align-self:start">
+            <div class="cal-hdr">
+              <button class="btn sec" onclick="calPrev()">‹</button>
+              <div id="cal-month-title" style="font-family:var(--fh);font-size:24px;letter-spacing:2px"></div>
+              <button class="btn sec" onclick="calNext()">›</button>
+            </div>
+            <div id="cal-grid"></div>
+          </div>
+          
+          <!-- Day Detail Panel -->
+          <div id="cal-detail" style="display:none"></div>
+        </div>
       </div>
 
       <!-- ── ACCOUNT ── -->

@@ -61,6 +61,24 @@
   font-family:var(--fd); font-weight:400; margin-top:5px;
 }
 .hdr-r { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+
+.coach-hdr-btn {
+  background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  color:var(--wht);font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1px;
+  padding:6px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .2s;
+}
+.coach-hdr-btn:hover { border-color:var(--bl3);background:rgba(0,176,255,.05); }
+.pulse-dot {
+  width:6px;height:6px;background:var(--red);border-radius:50%;
+  box-shadow:0 0 0 rgba(230,51,41,0.7);
+  animation: pulse-red 2s infinite;
+}
+@keyframes pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(230,51,41,0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(230,51,41,0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(230,51,41,0); }
+}
+
 .date-box {
   background:rgba(8,13,26,.82); border:1px solid rgba(230,51,41,.22);
   border-radius:10px; padding:7px 15px; text-align:right; backdrop-filter:blur(10px);
