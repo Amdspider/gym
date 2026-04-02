@@ -69,6 +69,65 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
+     ONBOARDING MODAL (FALLBACK/AI CALIBRATION)
+═══════════════════════════════════════════════════════ -->
+<div class="modal-ov" id="onboarding-modal" style="z-index:9999;background:var(--dk)">
+  <div class="modal" style="width:500px">
+    <h3>INITIALIZING SPIDER OS...</h3>
+    <p style="font-size:12px;color:var(--mut);margin-bottom:20px;line-height:1.6">Welcome! To calibrate your metabolic algorithm and create your custom protocol, we need your baseline metrics.</p>
+    
+    <div class="g2" style="margin-bottom:12px">
+      <div>
+        <label class="lbl-small">AGE</label>
+        <input type="number" class="inp" id="ob-age" placeholder="sys: years" value="25">
+      </div>
+      <div>
+        <label class="lbl-small">GENDER</label>
+        <select class="inp" id="ob-gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="g2" style="margin-bottom:12px">
+      <div>
+        <label class="lbl-small">WEIGHT (KG)</label>
+        <input type="number" class="inp" id="ob-weight" placeholder="sys: kg" value="70">
+      </div>
+      <div>
+        <label class="lbl-small">HEIGHT (CM)</label>
+        <input type="number" class="inp" id="ob-height" placeholder="sys: cm" value="175">
+      </div>
+    </div>
+
+    <div class="modal-row" style="margin-bottom:12px">
+      <label class="lbl-small">ACTIVITY MULTIPLIER</label>
+      <select class="inp" id="ob-activity">
+        <option value="1.2">1.2 (Sedentary / Desk Job)</option>
+        <option value="1.375">1.375 (Light Exercise 1-3 days)</option>
+        <option value="1.55" selected>1.55 (Moderate Exercise 3-5 days)</option>
+        <option value="1.725">1.725 (Heavy Exercise 6-7 days)</option>
+        <option value="1.9">1.9 (Athlete / Physical Job)</option>
+      </select>
+    </div>
+
+    <div class="modal-row">
+      <label class="lbl-small">DIRECTIVE.GOAL</label>
+      <select class="inp" id="ob-goal">
+        <option value="cut">CUT (Fat Loss -500kcal)</option>
+        <option value="maintain" selected>MAINTAIN (Recomp)</option>
+        <option value="bulk">BULK (Muscle Gain +300kcal)</option>
+      </select>
+    </div>
+
+    <div class="modal-actions" style="margin-top:24px">
+      <button class="btn" style="width:100%" onclick="window.submitOnboarding()">CALIBRATE PROTOCOL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
      MAIN APP
 ═══════════════════════════════════════════════════════ -->
 <div id="app">

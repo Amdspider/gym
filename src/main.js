@@ -12,6 +12,9 @@ import { Gym } from './js/pages/gym.js';
 import { Nutrition } from './js/pages/nutrition.js';
 import { Water } from './js/pages/water.js';
 import { Calendar } from './js/pages/calendar.js';
+import { Onboarding } from './js/pages/onboarding.js';
+import { Analytics } from './js/pages/analytics.js';
+import { HistoryList } from './js/pages/history.js';
 
 // Initialization sequence
 document.addEventListener('DOMContentLoaded', () => {
@@ -28,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
   Nutrition.init();
   Water.init();
   Calendar.init();
+  Onboarding.init();
+  Analytics.init();
+  HistoryList.init();
+
+  setTimeout(() => AI.analyzeDay(), 4000);
   
   // Set toggle state
   const skipToggle = document.getElementById('skip-intro-toggle');
