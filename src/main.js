@@ -6,8 +6,12 @@ import { Router } from './js/ui/router.js';
 import { Animations } from './js/ui/animations.js';
 import { AudioEngine } from './js/ui/audio.js';
 import { AI } from './js/ai/gemini.js';
-import { loginWithGoogle, logOut } from './js/state/firebase.js';
+import { login, register, loginWithGoogle, logOut, pullStateFromCloud } from './js/state/firebase.js';
 import { Nutrition } from './js/pages/nutrition.js';
+import { Habits } from './js/pages/habits.js';
+import { Water } from './js/pages/water.js';
+import { Gym } from './js/pages/gym.js';
+import { Calendar } from './js/pages/calendar.js';
 
 // Initialization sequence
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,6 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
   Store.init();
   Router.init();
   Nutrition.init();
+  Habits.init();
+  Water.init();
+  Gym.init();
+  Calendar.init();
   
   // Set toggle state
   const skipToggle = document.getElementById('skip-intro-toggle');
@@ -32,7 +40,54 @@ document.addEventListener('DOMContentLoaded', () => {
   runIntroSequence();
   setupCoachUI();
   setupAuthUI();
+  setupSettingsUI();
+  updateConnectivityIndicator();
+
+  // Listen for nav:goto from habits module
+  document.addEventListener('nav:goto', (e) => {
+    Router.goTo(e.detail.page);
+  });
+
+  // Monitor connectivity
+  window.addEventListener('online', updateConnectivityIndicator);
+  window.addEventListener('offline', updateConnectivityIndicator);
 });
+
+// ─── CONNECTIVITY INDICATOR ───
+function updateConnectivityIndicator() {
+  const dot = document.getElementById('coach-status-dot');
+  const label = document.getElementById('coach-status-label');
+  const isOnline = navigator.onLine;
+  const hasKey = !!localStorage.getItem('spider_gemini_key');
+
+  if (dot) {
+    if (isOnline && hasKey) {
+      dot.className = 'status-dot online';
+    } else if (isOnline) {
+      dot.className = 'status-dot idle';
+    } else {
+      dot.className = 'status-dot offline';
+    }
+  }
+  if (label) {
+    if (isOnline && hasKey) {
+      label.textContent = 'ONLINE';
+      label.style.color = 'var(--grn)';
+    } else if (isOnline) {
+      label.textContent = 'NO API KEY';
+      label.style.color = 'var(--gld)';
+    } else {
+      label.textContent = 'OFFLINE';
+      label.style.color = 'var(--red)';
+    }
+  }
+
+  // Update sidebar account dot
+  const accDot = document.getElementById('account-status-dot');
+  if (accDot) {
+    accDot.className = Store.currentUser ? 'sidebar-dot synced' : 'sidebar-dot offline';
+  }
+}
 
 // Intro Animation orchestration
 function runIntroSequence() {
@@ -100,9 +155,8 @@ function launchApp() {
   document.getElementById('app').style.display = 'block';
   document.getElementById('coach-fab').classList.add('vis');
   
-  // Example dummy auto prompt
   setTimeout(() => {
-    addCoachMessage('ai', "Hey! 🕷️ I'm your Gemini AI Coach. Connect your API key in Settings and sign in with Google in the Account tab to sync your multiversal data!");
+    addCoachMessage('ai', "Hey! 🕷️ I'm your Gemini AI Coach. Connect your API key in Settings and sign in via the Account tab to sync your data across devices!");
   }, 2000);
 }
 
@@ -146,6 +200,11 @@ function setupCoachUI() {
     document.getElementById('typing-ind').style.display = 'none';
     addCoachMessage('ai', response);
   };
+
+  window.quickAsk = (question) => {
+    document.getElementById('coach-inp').value = question;
+    window.sendMsg();
+  };
 }
 
 // ─── AUTHENTICATION UI ───
@@ -158,13 +217,18 @@ function setupAuthUI() {
       if(badge) { badge.textContent = "SYNCED"; badge.className = "badge b-act"; }
       document.getElementById('auth-panel').style.display = 'none';
       document.getElementById('profile-panel').style.display = 'block';
-      document.getElementById('user-nm').textContent = email.split('@')[0];
+      const userName = email.split('@')[0];
+      document.getElementById('user-nm').textContent = userName;
       document.getElementById('user-em').textContent = email;
+      document.getElementById('user-av').textContent = userName.charAt(0).toUpperCase();
+      document.getElementById('last-sync').textContent = 'Last sync: ' + new Date().toLocaleString();
       AudioEngine.play('success');
+      updateConnectivityIndicator();
     } else {
       if(badge) { badge.textContent = "OFFLINE"; badge.className = "badge b-lck"; }
       document.getElementById('profile-panel').style.display = 'none';
       document.getElementById('auth-panel').style.display = 'block';
+      updateConnectivityIndicator();
     }
   });
 
@@ -172,20 +236,224 @@ function setupAuthUI() {
     AudioEngine.play('click');
     try {
       await loginWithGoogle();
-      alert("Logged in successfully. Cloud sync is active!");
+      showToast('good', '☁️', 'SIGNED IN', 'Cloud sync is now active!');
     } catch(err) {
       if(err.code === 'auth/unauthorized-domain') {
-        alert("Firebase Domain Error!\n\nTo login, you must go to your Firebase Console -> Authentication -> Settings -> Authorized Domains and add 'amdspider.github.io' to the whitelist.");
+        showToast('warn', '⚠️', 'DOMAIN ERROR', 'Add your domain to Firebase Console → Auth → Authorized Domains');
       } else {
-        alert("Error logging in: " + err.message);
+        showToast('warn', '❌', 'LOGIN FAILED', err.message);
       }
+    }
+  };
+
+  window.authEmail = async () => {
+    AudioEngine.play('click');
+    const email = document.getElementById('auth-email')?.value.trim();
+    const pass = document.getElementById('auth-pass')?.value;
+    if (!email || !pass) { showToast('warn', '⚠️', 'MISSING FIELDS', 'Enter email and password'); return; }
+    try {
+      await login(email, pass);
+      showToast('good', '✅', 'LOGGED IN', 'Welcome back! Syncing your data...');
+    } catch(err) {
+      showToast('warn', '❌', 'LOGIN FAILED', err.message);
+    }
+  };
+
+  window.authRegister = async () => {
+    AudioEngine.play('click');
+    const email = document.getElementById('auth-email')?.value.trim();
+    const pass = document.getElementById('auth-pass')?.value;
+    if (!email || !pass) { showToast('warn', '⚠️', 'MISSING FIELDS', 'Enter email and password'); return; }
+    if (pass.length < 6) { showToast('warn', '⚠️', 'WEAK PASSWORD', 'Password must be at least 6 characters'); return; }
+    try {
+      await register(email, pass);
+      showToast('good', '🎉', 'REGISTERED', 'Account created! Your data is now syncing to the cloud.');
+    } catch(err) {
+      showToast('warn', '❌', 'REGISTRATION FAILED', err.message);
     }
   };
 
   window.authSignOut = async () => {
     AudioEngine.play('click');
     await logOut();
+    showToast('info', '👋', 'SIGNED OUT', 'You are now in offline mode.');
   };
+
+  window.syncCloud = async () => {
+    AudioEngine.play('click');
+    if (!Store.currentUser) {
+      showToast('warn', '⚠️', 'NOT SIGNED IN', 'Sign in first to sync data.');
+      return;
+    }
+    Store.syncToCloud();
+    document.getElementById('last-sync').textContent = 'Last sync: ' + new Date().toLocaleString();
+    showToast('good', '☁️', 'SYNCED', 'Data pushed to cloud successfully!');
+  };
+
+  window.loadCloud = async () => {
+    AudioEngine.play('click');
+    if (!Store.currentUser) {
+      showToast('warn', '⚠️', 'NOT SIGNED IN', 'Sign in first to load data.');
+      return;
+    }
+    try {
+      const cloudState = await pullStateFromCloud(Store.currentUser.uid);
+      if (cloudState) {
+        Store.data = { ...Store.data, ...cloudState };
+        Store.saveLocal();
+        showToast('good', '⬇️', 'LOADED', 'Cloud data loaded successfully!');
+      } else {
+        showToast('info', 'ℹ️', 'NO DATA', 'No cloud data found for your account.');
+      }
+    } catch (err) {
+      showToast('warn', '❌', 'LOAD FAILED', err.message);
+    }
+  };
+
+  window.toggleAutoSync = (checked) => {
+    localStorage.setItem('spiderOS_autoSync', checked);
+    AudioEngine.play('toggle');
+  };
+
+  window.clearAllData = () => {
+    if (!confirm('⚠️ Are you sure? This will erase ALL your local data including habits, history, nutrition, and settings.')) return;
+    localStorage.removeItem('spiderOS_v4');
+    location.reload();
+  };
+}
+
+// ─── SETTINGS UI ───
+function setupSettingsUI() {
+  window.updateKeyStatus = () => {
+    const inp = document.getElementById('api-key-input');
+    const badge = document.getElementById('key-status-badge');
+    if (inp && badge) {
+      if (inp.value.trim().length > 10) {
+        badge.textContent = 'KEY ENTERED';
+        badge.style.background = 'rgba(0,230,118,.09)';
+        badge.style.color = 'var(--grn)';
+        badge.style.borderColor = 'rgba(0,230,118,.22)';
+      } else {
+        badge.textContent = 'NO KEY';
+        badge.style.background = 'rgba(255,255,255,.05)';
+        badge.style.color = 'var(--mut)';
+        badge.style.borderColor = 'var(--br)';
+      }
+    }
+  };
+
+  window.toggleShowKey = (show) => {
+    const inp = document.getElementById('api-key-input');
+    if (inp) inp.type = show ? 'text' : 'password';
+  };
+
+  // Load existing key status
+  const savedKey = localStorage.getItem('spider_gemini_key');
+  const badge = document.getElementById('key-status-badge');
+  const storedDisplay = document.getElementById('key-stored-display');
+  const removeBtn = document.getElementById('remove-key-btn');
+
+  if (savedKey) {
+    if (badge) {
+      badge.textContent = 'KEY SAVED';
+      badge.style.background = 'rgba(0,230,118,.09)';
+      badge.style.color = 'var(--grn)';
+      badge.style.borderColor = 'rgba(0,230,118,.22)';
+    }
+    if (storedDisplay) {
+      storedDisplay.innerHTML = `<span style="color:var(--grn)">✅ Key saved</span> — <span style="color:var(--mut);font-family:monospace;font-size:11px">${savedKey.substring(0, 8)}${'•'.repeat(20)}</span>`;
+    }
+    if (removeBtn) removeBtn.style.display = 'block';
+  } else {
+    if (storedDisplay) {
+      storedDisplay.innerHTML = `<span style="color:var(--mut)">No key saved</span>`;
+    }
+  }
+
+  // Render cloud stats
+  const cloudStats = document.getElementById('cloud-stats');
+  if (cloudStats) {
+    document.addEventListener('store:changed', () => {
+      const history = Store.data.history || {};
+      const days = Object.keys(history).length;
+      const habits = (Store.data.habits || []).length;
+      const foods = Object.keys(Store.data.foodDatabase || {}).length;
+      cloudStats.innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div style="text-align:center;padding:8px;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:7px">
+            <div style="font-family:var(--fh);font-size:20px;color:var(--bl3)">${days}</div>
+            <div style="font-size:8px;color:var(--mut);letter-spacing:1px">DAYS</div>
+          </div>
+          <div style="text-align:center;padding:8px;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:7px">
+            <div style="font-family:var(--fh);font-size:20px;color:var(--red)">${habits}</div>
+            <div style="font-size:8px;color:var(--mut);letter-spacing:1px">HABITS</div>
+          </div>
+          <div style="text-align:center;padding:8px;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:7px">
+            <div style="font-family:var(--fh);font-size:20px;color:var(--gld)">${foods}</div>
+            <div style="font-size:8px;color:var(--mut);letter-spacing:1px">FOODS</div>
+          </div>
+        </div>`;
+    });
+  }
+
+  // Render history page
+  document.addEventListener('store:changed', () => renderHistory());
+  document.addEventListener('nav:changed', (e) => {
+    if (e.detail.page === 'history') renderHistory();
+  });
+}
+
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  if (!el) return;
+
+  const history = Store.data.history || {};
+  const keys = Object.keys(history).sort().reverse();
+
+  if (keys.length === 0) {
+    el.innerHTML = `<div class="card" style="text-align:center;padding:30px;color:var(--mut)">No history yet. Start tracking today!</div>`;
+    return;
+  }
+
+  el.innerHTML = keys.slice(0, 30).map(key => {
+    const day = history[key];
+    const date = new Date(key);
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const doneCount = (day.done || []).length;
+    const total = (Store.data.habits || []).length;
+
+    return `
+      <div class="card" style="margin-bottom:8px;padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-family:var(--fd);font-size:11px;color:var(--mut);letter-spacing:1px">${dayNames[date.getDay()]} · ${key}</div>
+            <div style="font-size:13px;font-weight:700;margin-top:3px">Score: <span style="color:var(--red)">${day.score || 0}</span></div>
+          </div>
+          <div style="display:flex;gap:12px;font-size:11px">
+            <span style="color:var(--red)">${doneCount}/${total} habits</span>
+            <span style="color:var(--bl3)">${day.water || 0} 💧</span>
+            <span style="color:var(--gld)">${day.calories || 0} kcal</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─── TOAST SYSTEM ───
+function showToast(type, icon, title, message) {
+  const zone = document.getElementById('alert-zone');
+  if (!zone) return;
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <span class="toast-ico">${icon}</span>
+    <div><div class="toast-t">${title}</div><div class="toast-m">${message}</div></div>`;
+  zone.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 4000);
 }
 
 // Ensure the cursor follows
@@ -208,13 +476,44 @@ window.saveAppPrefs = () => {
 window.saveApiKey = () => {
   const inp = document.getElementById('api-key-input').value;
   localStorage.setItem('spider_gemini_key', inp);
-  alert("Gemini key saved securely!");
+  showToast('good', '🔑', 'KEY SAVED', 'Gemini key saved securely on this device!');
+  updateConnectivityIndicator();
+  
+  // Update UI
+  const badge = document.getElementById('key-status-badge');
+  if (badge) {
+    badge.textContent = 'KEY SAVED';
+    badge.style.background = 'rgba(0,230,118,.09)';
+    badge.style.color = 'var(--grn)';
+    badge.style.borderColor = 'rgba(0,230,118,.22)';
+  }
+  const storedDisplay = document.getElementById('key-stored-display');
+  if (storedDisplay) {
+    storedDisplay.innerHTML = `<span style="color:var(--grn)">✅ Key saved</span> — <span style="color:var(--mut);font-family:monospace;font-size:11px">${inp.substring(0, 8)}${'•'.repeat(20)}</span>`;
+  }
+  const removeBtn = document.getElementById('remove-key-btn');
+  if (removeBtn) removeBtn.style.display = 'block';
 };
+
 window.removeApiKey = () => {
   localStorage.removeItem('spider_gemini_key');
   document.getElementById('api-key-input').value = '';
-  alert("Gemini key removed.");
+  showToast('info', '🗑️', 'KEY REMOVED', 'Gemini key removed from this device.');
+  updateConnectivityIndicator();
+  
+  const badge = document.getElementById('key-status-badge');
+  if (badge) {
+    badge.textContent = 'NO KEY';
+    badge.style.background = 'rgba(255,255,255,.05)';
+    badge.style.color = 'var(--mut)';
+    badge.style.borderColor = 'var(--br)';
+  }
+  const storedDisplay = document.getElementById('key-stored-display');
+  if (storedDisplay) storedDisplay.innerHTML = `<span style="color:var(--mut)">No key saved</span>`;
+  const removeBtn = document.getElementById('remove-key-btn');
+  if (removeBtn) removeBtn.style.display = 'none';
 };
+
 window.saveAudioSettings = () => {
   const sfxOn = document.getElementById('audio-toggle').checked;
   const sfxPack = document.getElementById('audio-pack').value;

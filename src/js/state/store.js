@@ -97,6 +97,20 @@ export const Store = {
     this.saveLocal();
   },
 
+  addHabit(habit) {
+    if (!this.data.habits) this.data.habits = [];
+    this.data.habits.push(habit);
+    this.saveLocal();
+  },
+
+  removeHabit(id) {
+    this.data.habits = (this.data.habits || []).filter(h => h.id !== id);
+    // Also remove from todayDone
+    const idx = this.data.todayDone.indexOf(id);
+    if (idx > -1) this.data.todayDone.splice(idx, 1);
+    this.saveLocal();
+  },
+
   addWater(amt) {
     this.data.waterCount = Math.max(0, this.data.waterCount + amt);
     this.saveLocal();
@@ -109,6 +123,18 @@ export const Store = {
     const g = this.data.calorieGoal;
     const dp = Math.abs(cal - g);
     const ntrPts = Math.max(0, 25 - (dp / 50));
-    return Math.round(habPts + wtrPts + ntrPts);
+    const score = Math.round(habPts + wtrPts + ntrPts);
+
+    // Store score in today's history
+    const t = this.todayKey();
+    if (this.data.history && this.data.history[t]) {
+      this.data.history[t].score = score;
+    }
+
+    return score;
+  },
+
+  getDayData(dateKey) {
+    return (this.data.history || {})[dateKey] || null;
   }
 };
