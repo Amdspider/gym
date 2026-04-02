@@ -368,11 +368,12 @@
       <!-- ── ANALYTICS ── -->
       <div class="page" id="page-analytics">
         <div class="sec-hdr"><div class="sec-title">ANALYTICS<small>PERFORMANCE DATA</small></div></div>
-        <div class="g2">
-          <div class="card"><div class="card-t"><span class="ac">📊</span> Weekly Habits</div><canvas id="chart-habits"></canvas></div>
-          <div class="card"><div class="card-t"><span class="ac">🔥</span> Calorie Trend</div><canvas id="chart-cal"></canvas></div>
+        <div class="g2" style="gap:16px;">
+          <div class="card"><div class="card-t"><span class="ac">📈</span> HABIT COMPLETION</div><canvas id="chart-habits"></canvas></div>
+          <div class="card"><div class="card-t"><span class="ac">💧</span> WATER INTAKE</div><canvas id="chart-water"></canvas></div>
+          <div class="card"><div class="card-t"><span class="ac">🔥</span> CALORIES</div><canvas id="chart-cal"></canvas></div>
+          <div class="card"><div class="card-t"><span class="ac">⚡</span> PERFORMANCE SCORE</div><canvas id="chart-score"></canvas></div>
         </div>
-        <div class="card" style="margin-top:14px"><div class="card-t"><span class="ac">💧</span> Hydration Trend</div><canvas id="chart-water"></canvas></div>
       </div>
 
       <!-- ── HISTORY ── -->
@@ -389,23 +390,25 @@
             <button class="btn sec" onclick="calToday()" style="padding:8px 12px">TODAY</button>
           </div>
         </div>
-        
-        <div id="cal-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px"></div>
+        <div id="cal-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px"></div>
 
-        <div class="g2">
-          <!-- Calendar Grid -->
-          <div class="card" style="align-self:start">
-            <div class="cal-hdr">
-              <button class="btn sec" onclick="calPrev()">‹</button>
-              <div id="cal-month-title" style="font-family:var(--fh);font-size:24px;letter-spacing:2px"></div>
-              <button class="btn sec" onclick="calNext()">›</button>
+        <div class="card" style="padding:24px">
+          <div class="cal-hdr">
+            <div style="font-family:var(--fd);font-size:14px;letter-spacing:2px;color:var(--mut);display:flex;align-items:center;gap:8px">
+              <span class="ac">📅</span> MONTHLY CALENDAR
             </div>
-            <div id="cal-grid"></div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <button class="btn sec" onclick="calPrev()" style="padding:6px 14px">‹</button>
+              <div id="cal-month-title" style="font-family:var(--fd);font-size:14px;letter-spacing:2px;color:var(--wht);min-width:120px;text-align:center"></div>
+              <button class="btn sec" onclick="calNext()" style="padding:6px 14px">›</button>
+            </div>
           </div>
-          
-          <!-- Day Detail Panel -->
-          <div id="cal-detail" style="display:none"></div>
+          <div id="cal-grid"></div>
         </div>
+        
+        <!-- Day Detail Panel (Full Screen Overlay or Slide in?) -->
+        <!-- Keeping it simple: it will be rendered below or inside a modal if needed, let's keep it below for now -->
+        <div id="cal-detail" style="display:none;margin-top:16px"></div>
       </div>
 
       <!-- ── ACCOUNT ── -->
