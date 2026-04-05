@@ -68,12 +68,13 @@ export const Store = {
     const t = this.todayKey();
     if (!this.data.history) this.data.history = {};
     if (!this.data.history[t]) this.data.history[t] = { done: [], water: 0, calories: 0, foods: [], exercises: [], score: 0 };
+    
+    // Always bind the active state strictly to today's history entry.
+    // This clears the flat arrays if a new day has started.
     this.data.todayDone = this.data.history[t].done || [];
     this.data.waterCount = this.data.history[t].water || 0;
-    // Restore today's foods from history if available
-    if (this.data.history[t].foods && this.data.history[t].foods.length > 0 && (!this.data.foods || this.data.foods.length === 0)) {
-      this.data.foods = this.data.history[t].foods;
-    }
+    this.data.foods = this.data.history[t].foods || [];
+    this.data.exercises = this.data.history[t].exercises || [];
   },
 
   saveLocal() {

@@ -11,8 +11,6 @@ export const Analytics = {
     if (window.Chart) {
       Chart.defaults.color = 'rgba(200, 210, 255, 0.42)';
       Chart.defaults.font.family = "'Rajdhani', sans-serif";
-      Chart.defaults.scale.grid.color = 'rgba(255,255,255,0.03)';
-      Chart.defaults.scale.grid.drawBorder = false;
     }
   },
 

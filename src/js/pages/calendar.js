@@ -155,7 +155,7 @@ export const Calendar = {
           dotColor = 'var(--red)';
         } else if (done > 0 || (day.water || 0) > 0 || (day.calories || 0) > 0) {
           status = 'partial';
-          dotColor = 'var(--gld)';
+          dotColor = '#7a1410'; // Dimmer dark red for partial
         }
       }
 
@@ -177,7 +177,7 @@ export const Calendar = {
     html += `
       <div class="cal-legend">
         <div class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--red)"></span> Perfect day</div>
-        <div class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--gld)"></span> Partial</div>
+        <div class="cal-legend-item"><span class="cal-legend-dot" style="background:#7a1410"></span> Partial</div>
         <div class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(255,255,255,.15)"></span> No data</div>
       </div>`;
 
