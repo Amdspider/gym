@@ -301,8 +301,8 @@
 .cal-future{opacity:0.4;cursor:default}
 .cal-future:hover{background:transparent !important;border-color:transparent !important}
 
-.cal-cell.perfect{background:rgba(230,51,41,.06);border-color:rgba(230,51,41,.15)}
-.cal-cell.partial{background:rgba(255,255,255,.04);border-color:var(--br)}
+.cal-cell.perfect{background:rgba(230,51,41,.18);border-color:var(--red)}
+.cal-cell.partial{background:rgba(230,51,41,.08);border-color:rgba(230,51,41,.3)}
 .cal-cell.no-data{background:transparent;border-color:transparent}
 
 .cal-cell:hover:not(.cal-empty):not(.cal-future){background:rgba(255,255,255,.08);border-color:var(--br2)}

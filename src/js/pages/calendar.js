@@ -195,6 +195,7 @@ export const Calendar = {
     }
 
     container.style.display = 'block';
+    setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
     const dayData = Store.getDayData(this.selectedDay);
     
     const dateObj = new Date(this.selectedDay + 'T12:00:00');

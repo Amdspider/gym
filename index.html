@@ -330,6 +330,7 @@
             <select class="inp" id="food-unit" onchange="calcFoodMacros()" style="flex:1; min-width:80px;">
               <option value="item">Units</option>
               <option value="g">Grams</option>
+              <option value="ml">ml</option>
             </select>
             <input type="number" class="inp" id="food-qty" placeholder="Qty" oninput="calcFoodMacros()" value="1" style="flex:1; min-width:55px;">
           </div>
@@ -522,7 +523,7 @@
             <div style="display:flex; flex-wrap:wrap; gap:6px;">
               <input type="text"   class="inp" id="ndb-name" placeholder="Food Name (e.g. Peanuts)" style="flex:2">
               <input type="number" class="inp" id="ndb-base" placeholder="Base Qty (e.g. 100)" style="flex:1">
-              <select class="inp" id="ndb-unit" style="flex:1"><option value="g">grams</option><option value="item">units</option></select>
+              <select class="inp" id="ndb-unit" style="flex:1"><option value="g">grams</option><option value="item">units</option><option value="ml">ml</option></select>
             </div>
             <div style="display:flex; flex-wrap:wrap; gap:6px;">
               <input type="number" class="inp" id="ndb-k" placeholder="kcal">

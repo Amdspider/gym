@@ -142,7 +142,7 @@ export const Nutrition = {
         style="padding:9px 12px; cursor:pointer; border-bottom:1px solid var(--br); font-size:12px; color:var(--wht);"
         onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">
         <strong>${f.name}</strong>
-        <span style="color:var(--mut); margin-left:8px;">per ${f.base}${f.unit === 'g' ? 'g' : ''} → ${f.cal}kcal / ${f.pro}g P / ${f.crb}g C / ${f.fat}g F</span>
+        <span style="color:var(--mut); margin-left:8px;">per ${f.base}${f.unit === 'item' ? '' : f.unit} → ${f.cal}kcal / ${f.pro}g P / ${f.crb}g C / ${f.fat}g F</span>
       </div>`).join('');
 
     window.selectFood = (key) => {
@@ -183,7 +183,7 @@ export const Nutrition = {
     Store.data.foods = Store.data.foods || [];
     Store.data.foods.push({
       id: Date.now(),
-      name: `${qty}${unit === 'g' ? 'g' : 'x'} ${name}`,
+      name: `${qty}${unit === 'item' ? 'x' : unit} ${name}`,
       cal, pro, crb, fat,
     });
     Store.saveLocal();
