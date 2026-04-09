@@ -323,6 +323,7 @@
 @media(max-width:768px){
   .coach-box{width:100%;max-width:100%;height:78vh;border-radius:18px 18px 0 0}
   #coach-panel{padding:0;align-items:flex-end}
+  .coach-fab{bottom:92px;right:14px}
   .sec-hdr{flex-wrap:wrap;gap:10px;align-items:center}
   .sec-title{font-size:24px;letter-spacing:2px}
   #cal-stats{grid-template-columns:1fr 1fr !important;gap:10px !important}
@@ -335,6 +336,7 @@
   #page-analytics .card{padding:12px}
 }
 @media(max-width:500px){
+  .coach-fab{bottom:86px;right:12px;width:52px;height:52px}
   #cal-stats{grid-template-columns:1fr !important}
   #page-analytics canvas{height:160px !important}
   #cal-performance-chart{height:160px !important}

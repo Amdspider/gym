@@ -1,9 +1,6 @@
 // ═══════════════════════════════════════════════════════
 //   FIREBASE SYNCHRONIZATION ENGINE
 // ═══════════════════════════════════════════════════════
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyATZBHQYh6bWjixHvJNkMqCiYEwTWY2BbY",
@@ -15,40 +12,82 @@ const firebaseConfig = {
   measurementId: "G-6LQ6GE85T5"
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
+let sdkReadyPromise = null;
+let sdk = null;
+let app = null;
+export let auth = null;
+export let db = null;
+let provider = null;
+
+async function ensureFirebase() {
+  if (sdkReadyPromise) return sdkReadyPromise;
+
+  sdkReadyPromise = (async () => {
+    try {
+      const appSdk = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+      const authSdk = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
+      const fsSdk = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+
+      sdk = { appSdk, authSdk, fsSdk };
+      app = appSdk.initializeApp(firebaseConfig);
+      auth = authSdk.getAuth(app);
+      db = fsSdk.getFirestore(app);
+      provider = new authSdk.GoogleAuthProvider();
+      return true;
+    } catch (err) {
+      console.warn('Firebase SDK unavailable (offline mode):', err);
+      return false;
+    }
+  })();
+
+  return sdkReadyPromise;
+}
 
 export async function login(email, password) {
-  const cred = await signInWithEmailAndPassword(auth, email, password);
+  const ready = await ensureFirebase();
+  if (!ready || !auth) throw new Error('Cloud auth unavailable offline');
+  const cred = await sdk.authSdk.signInWithEmailAndPassword(auth, email, password);
   return cred.user;
 }
 
 export async function register(email, password) {
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
+  const ready = await ensureFirebase();
+  if (!ready || !auth) throw new Error('Cloud auth unavailable offline');
+  const cred = await sdk.authSdk.createUserWithEmailAndPassword(auth, email, password);
   return cred.user;
 }
 
 export async function loginWithGoogle() {
-  const cred = await signInWithPopup(auth, provider);
+  const ready = await ensureFirebase();
+  if (!ready || !auth) throw new Error('Cloud auth unavailable offline');
+  const cred = await sdk.authSdk.signInWithPopup(auth, provider);
   return cred.user;
 }
 
 export async function logOut() {
-  await signOut(auth);
+  if (!auth) return;
+  await sdk.authSdk.signOut(auth);
 }
 
 // Subscribe to auth state
 export function onAuthChange(callback) {
-  return onAuthStateChanged(auth, callback);
+  ensureFirebase().then((ready) => {
+    if (!ready || !auth) {
+      callback(null);
+      return;
+    }
+    sdk.authSdk.onAuthStateChanged(auth, callback);
+  });
+  return () => {};
 }
 
 // ─── FIRESTORE SYNC ───
 export async function pushStateToCloud(userId, localState) {
   if (!userId) return;
-  const userRef = doc(db, "users", userId);
-  await setDoc(userRef, {
+  const ready = await ensureFirebase();
+  if (!ready || !db) throw new Error('Cloud sync unavailable offline');
+  const userRef = sdk.fsSdk.doc(db, "users", userId);
+  await sdk.fsSdk.setDoc(userRef, {
     state: JSON.stringify(localState),
     lastUpdated: new Date().toISOString()
   });
@@ -56,8 +95,10 @@ export async function pushStateToCloud(userId, localState) {
 
 export async function pullStateFromCloud(userId) {
   if (!userId) return null;
-  const userRef = doc(db, "users", userId);
-  const snap = await getDoc(userRef);
+  const ready = await ensureFirebase();
+  if (!ready || !db) return null;
+  const userRef = sdk.fsSdk.doc(db, "users", userId);
+  const snap = await sdk.fsSdk.getDoc(userRef);
   if (snap.exists()) {
     const payload = snap.data() || {};
     return {
