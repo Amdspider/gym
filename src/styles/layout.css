@@ -98,6 +98,7 @@
   .layout{flex-direction:column}
   .main{padding:12px 10px 104px}
   .g2,.g3{grid-template-columns:1fr}
+  .hdr-r{align-items:flex-start}
   .sidebar{
     position:fixed;
     left:0;

@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   runIntroSequence();
   setupCoachUI();
   setupAuthUI();
+  setupConnectivityUI();
 });
 
 // Intro Animation orchestration
@@ -265,6 +266,23 @@ function setupAuthUI() {
     }
   };
   setTimeout(window.updateKeyStatus, 500);
+}
+
+function setupConnectivityUI() {
+  const badge = document.getElementById('net-badge');
+  if (!badge) return;
+
+  const render = () => {
+    const online = navigator.onLine;
+    badge.textContent = online ? 'ONLINE' : 'OFFLINE MODE';
+    badge.classList.toggle('online', online);
+    badge.classList.toggle('offline', !online);
+    badge.title = online ? 'Cloud sync available' : 'Working offline. Sync resumes when online.';
+  };
+
+  window.addEventListener('online', render);
+  window.addEventListener('offline', render);
+  render();
 }
 
 // Ensure the cursor follows

@@ -1,8 +1,11 @@
 {
   "name": "SPIDER OS",
   "short_name": "SPIDER",
-  "start_url": "./index.html",
+  "id": "/gym/",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#04060f",
   "theme_color": "#04060f",
   "orientation": "portrait-primary",
@@ -10,12 +13,14 @@
     {
       "src": "icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ]
 }

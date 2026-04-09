@@ -77,6 +77,21 @@ select.inp { appearance:none; cursor:pointer; }
 .badge { display:inline-block; font-size:9px; border-radius:4px; padding:3px 8px; font-family:var(--fd); letter-spacing:1.5px; font-weight:700; }
 .b-act{background:rgba(0,230,118,.09);color:var(--grn);border:1px solid rgba(0,230,118,.22)}
 .b-lck{background:rgba(255,255,255,.05);color:var(--mut);border:1px solid var(--br)}
+.net-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:9px;border-radius:999px;padding:4px 10px;
+  font-family:var(--fd);letter-spacing:1.2px;font-weight:700;
+  border:1px solid var(--br2);background:rgba(255,255,255,.04);color:var(--mut);
+}
+.net-badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:currentColor;
+}
+.net-badge.online{
+  color:var(--grn);border-color:rgba(0,230,118,.28);background:rgba(0,230,118,.08);
+}
+.net-badge.offline{
+  color:var(--gld);border-color:rgba(255,214,0,.3);background:rgba(255,214,0,.08);
+}
 
 .tgl { position:relative; width:36px; height:20px; }
 .tgl input { opacity:0; width:0; height:0; }
