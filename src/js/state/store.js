@@ -5,6 +5,10 @@ import { pushStateToCloud, pullStateFromCloud, onAuthChange } from './firebase.j
 
 export const Store = {
   currentUser: null,
+  syncTimer: null,
+  syncDebounceMs: 1500,
+  pendingSyncKey: 'spiderOS_pendingSync',
+  localUpdatedKey: 'spiderOS_localUpdatedAt',
   
   data: {
     habits: [
@@ -31,22 +35,33 @@ export const Store = {
 
   init() {
     this.loadLocal();
+    window.addEventListener('online', () => this.flushPendingSync());
+
     onAuthChange(async (user) => {
       this.currentUser = user;
       if (user) {
-        // Authenticated — pull from cloud to sync down
+        // Authenticated — reconcile local vs cloud by latest update timestamp.
         try {
           const cloudState = await pullStateFromCloud(user.uid);
-          if (cloudState) {
-            this.data = { ...this.data, ...cloudState };
+          const localUpdatedAt = this.getLocalUpdatedAt();
+          const cloudUpdatedAt = cloudState?.lastUpdated ? Date.parse(cloudState.lastUpdated) : 0;
+
+          if (cloudState?.state) {
+            if (localUpdatedAt > cloudUpdatedAt) {
+              this.queueCloudSync(true);
+            } else {
+              this.data = { ...this.data, ...cloudState.state };
+              this.markLocalUpdated(cloudUpdatedAt || Date.now());
+            }
             this.ensureTodayData();
-            this.saveLocal();
+            this.saveLocal({ skipCloudSync: true });
           } else {
             // First time, push local to cloud
-            this.syncToCloud();
+            this.queueCloudSync(true);
           }
         } catch(e) { console.warn('Cloud sync failed:', e); }
         document.dispatchEvent(new CustomEvent('auth:status', { detail: { authorized: true, email: user.email } }));
+        this.flushPendingSync();
       } else {
         document.dispatchEvent(new CustomEvent('auth:status', { detail: { authorized: false, email: null } }));
       }
@@ -77,7 +92,7 @@ export const Store = {
     this.data.exercises = this.data.history[t].exercises || [];
   },
 
-  saveLocal() {
+  saveLocal(options = {}) {
     try {
       const t = this.todayKey();
       if (!this.data.history[t]) this.data.history[t] = {};
@@ -90,17 +105,63 @@ export const Store = {
       this.data.history[t].habitCount = this.data.habits.length;
       
       localStorage.setItem('spiderOS_v4', JSON.stringify(this.data));
+      this.markLocalUpdated();
       document.dispatchEvent(new Event('store:changed'));
       
-      // Auto Sync if logged in
-      this.syncToCloud();
+      if (!options.skipCloudSync) {
+        if (this.isOnline()) this.queueCloudSync();
+        else localStorage.setItem(this.pendingSyncKey, 'true');
+      }
     } catch (e) {}
   },
 
-  syncToCloud() {
-    if (this.currentUser) {
-      try { pushStateToCloud(this.currentUser.uid, this.data); } catch(e) {}
+  async syncToCloud() {
+    if (!this.currentUser) return;
+    if (!this.isOnline()) {
+      localStorage.setItem(this.pendingSyncKey, 'true');
+      return;
     }
+    try {
+      await pushStateToCloud(this.currentUser.uid, this.data);
+      localStorage.removeItem(this.pendingSyncKey);
+    } catch (e) {
+      localStorage.setItem(this.pendingSyncKey, 'true');
+      console.warn('Cloud sync failed:', e);
+    }
+  },
+
+  queueCloudSync(immediate = false) {
+    if (this.syncTimer) {
+      clearTimeout(this.syncTimer);
+      this.syncTimer = null;
+    }
+    if (immediate) {
+      this.syncToCloud();
+      return;
+    }
+    this.syncTimer = setTimeout(() => {
+      this.syncTimer = null;
+      this.syncToCloud();
+    }, this.syncDebounceMs);
+  },
+
+  flushPendingSync() {
+    const hasPending = localStorage.getItem(this.pendingSyncKey) === 'true';
+    if (hasPending || this.currentUser) this.queueCloudSync(true);
+  },
+
+  isOnline() {
+    return typeof navigator === 'undefined' ? true : navigator.onLine;
+  },
+
+  markLocalUpdated(ts = Date.now()) {
+    localStorage.setItem(this.localUpdatedKey, String(ts));
+  },
+
+  getLocalUpdatedAt() {
+    const raw = localStorage.getItem(this.localUpdatedKey) || '0';
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? parsed : 0;
   },
 
   // ─── ACTION MUTATORS ───

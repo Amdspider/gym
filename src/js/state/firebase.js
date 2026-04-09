@@ -59,7 +59,11 @@ export async function pullStateFromCloud(userId) {
   const userRef = doc(db, "users", userId);
   const snap = await getDoc(userRef);
   if (snap.exists()) {
-    return JSON.parse(snap.data().state || '{}');
+    const payload = snap.data() || {};
+    return {
+      state: JSON.parse(payload.state || '{}'),
+      lastUpdated: payload.lastUpdated || null
+    };
   }
   return null;
 }
