@@ -202,13 +202,9 @@ export const Calendar = {
     const dateStr = dateObj.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
     if (!dayData) {
-      container.innerHTML = `
-        <div class="card" style="margin-top:14px">
-          <div class="card-t"><span class="ac">📅</span> ${dateStr}</div>
-          <div style="text-align:center;padding:28px;color:var(--mut);font-size:13px">
-            No data recorded for this day.
-          </div>
-        </div>`;
+      // User requested empty detail panel for unmarked days.
+      container.innerHTML = '';
+      container.style.display = 'none';
       return;
     }
 
