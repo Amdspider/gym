@@ -45,8 +45,135 @@ export const Calendar = {
 
   render() {
     this.renderSummaryStats();
+    this.renderPerformanceChart();
     this.renderCalendarGrid();
     this.renderDayDetail();
+  },
+
+  renderPerformanceChart() {
+    const canvas = document.getElementById('cal-performance-chart');
+    if (!canvas) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const width = Math.max(280, canvas.clientWidth || canvas.parentElement?.clientWidth || 280);
+    const height = Math.max(170, canvas.clientHeight || 170);
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    context.clearRect(0, 0, width, height);
+
+    const year = this.currentYear;
+    const month = this.currentMonth;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    // Build full month data so each day is represented in the line graph.
+    const points = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const day = Store.data.history[key];
+      const score = day ? (day.score || Store.getScore(key) || 0) : 0;
+      points.push({ day: d, score: Math.max(0, Math.min(100, score)), hasData: !!day });
+    }
+
+    const leftPad = 34;
+    const rightPad = 12;
+    const topPad = 14;
+    const bottomPad = 28;
+    const chartW = width - leftPad - rightPad;
+    const chartH = height - topPad - bottomPad;
+
+    // Horizontal guide lines (Y grid)
+    context.strokeStyle = 'rgba(0,176,255,0.18)';
+    context.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = topPad + (chartH * i) / 4;
+      context.beginPath();
+      context.moveTo(leftPad, y);
+      context.lineTo(leftPad + chartW, y);
+      context.stroke();
+    }
+
+    // Vertical guide lines (X grid)
+    const xTicks = [1, 5, 10, 15, 20, 25, daysInMonth]
+      .filter((d, idx, arr) => d <= daysInMonth && arr.indexOf(d) === idx);
+    xTicks.forEach((day) => {
+      const x = leftPad + ((day - 1) / Math.max(1, daysInMonth - 1)) * chartW;
+      context.beginPath();
+      context.moveTo(x, topPad);
+      context.lineTo(x, topPad + chartH);
+      context.stroke();
+    });
+
+    context.textAlign = 'right';
+    context.font = "10px Rajdhani, sans-serif";
+    context.fillStyle = 'rgba(200, 210, 255, 0.42)';
+    for (let i = 0; i <= 4; i++) {
+      const value = 100 - i * 25;
+      const y = topPad + (chartH * i) / 4 + 3;
+      context.fillText(`${value}`, leftPad - 4, y);
+    }
+
+    const xy = points.map((pt) => {
+      const x = leftPad + ((pt.day - 1) / Math.max(1, daysInMonth - 1)) * chartW;
+      const y = topPad + chartH - (pt.score / 100) * chartH;
+      return { x, y, day: pt.day, score: pt.score, hasData: pt.hasData };
+    });
+
+    const fillGradient = context.createLinearGradient(0, topPad, 0, topPad + chartH);
+    fillGradient.addColorStop(0, 'rgba(255,165,0,0.28)');
+    fillGradient.addColorStop(1, 'rgba(0,0,0,0)');
+
+    context.beginPath();
+    xy.forEach((pt, idx) => {
+      if (idx === 0) context.moveTo(pt.x, pt.y);
+      else context.lineTo(pt.x, pt.y);
+    });
+    context.lineTo(xy[xy.length - 1].x, topPad + chartH);
+    context.lineTo(xy[0].x, topPad + chartH);
+    context.closePath();
+    context.fillStyle = fillGradient;
+    context.fill();
+
+    context.beginPath();
+    xy.forEach((pt, idx) => {
+      if (idx === 0) context.moveTo(pt.x, pt.y);
+      else context.lineTo(pt.x, pt.y);
+    });
+    // Main trend line (orange, like reference)
+    context.strokeStyle = '#f39c12';
+    context.lineWidth = 2.5;
+    context.stroke();
+
+    xy.forEach((pt) => {
+      context.beginPath();
+      context.arc(pt.x, pt.y, 3.2, 0, Math.PI * 2);
+      context.fillStyle = pt.hasData ? '#f39c12' : 'rgba(243,156,18,0.35)';
+      context.fill();
+      context.strokeStyle = '#fff';
+      context.lineWidth = 1;
+      context.stroke();
+    });
+
+    context.textAlign = 'center';
+    context.font = "10px Rajdhani, sans-serif";
+    context.fillStyle = 'rgba(200, 210, 255, 0.55)';
+    [...new Set(xTicks)].forEach((day) => {
+      const x = leftPad + ((day - 1) / Math.max(1, daysInMonth - 1)) * chartW;
+      context.fillText(String(day), x, height - 8);
+    });
+
+    // Axis titles
+    context.fillStyle = 'rgba(200, 210, 255, 0.68)';
+    context.font = "10px Rajdhani, sans-serif";
+    context.textAlign = 'center';
+    context.fillText('DAY OF MONTH', leftPad + chartW / 2, height - 2);
+    context.save();
+    context.translate(10, topPad + chartH / 2);
+    context.rotate(-Math.PI / 2);
+    context.fillText('PERFORMANCE SCORE', 0, 0);
+    context.restore();
   },
 
   // ─── SUMMARY STATS ROW ───
