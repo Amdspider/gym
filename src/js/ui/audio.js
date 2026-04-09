@@ -5,7 +5,7 @@
 export const AudioEngine = {
   ctx: null,
   enabled: true,
-  pack: 'scifi', // 'scifi', 'minimal', 'classic'
+  pack: 'scifi', // 'scifi', 'minimal', 'spider', 'classic', 'cinematic'
   masterVolume: 0.3,
 
   init() {
@@ -160,6 +160,87 @@ export const AudioEngine = {
         gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
         osc.start(t);
         osc.stop(t + 0.1);
+      }
+    }
+    // Classic Arcade Pack
+    else if (this.pack === 'classic') {
+      if (type === 'click') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(900, t);
+        osc.frequency.exponentialRampToValueAtTime(500, t + 0.08);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.9, t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
+        osc.start(t);
+        osc.stop(t + 0.08);
+      } else if (type === 'nav') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(500, t);
+        osc.frequency.setValueAtTime(700, t + 0.05);
+        osc.frequency.setValueAtTime(900, t + 0.1);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.75, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.14);
+        osc.start(t);
+        osc.stop(t + 0.14);
+      } else if (type === 'success') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(660, t);
+        osc.frequency.setValueAtTime(990, t + 0.08);
+        osc.frequency.setValueAtTime(1320, t + 0.16);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.8, t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.22);
+        osc.start(t);
+        osc.stop(t + 0.22);
+      } else {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(420, t);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.6, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+        osc.start(t);
+        osc.stop(t + 0.1);
+      }
+    }
+    // Cinematic Soft Pack
+    else if (this.pack === 'cinematic') {
+      if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, t);
+        osc.frequency.exponentialRampToValueAtTime(380, t + 0.12);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.55, t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.14);
+        osc.start(t);
+        osc.stop(t + 0.14);
+      } else if (type === 'nav') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, t);
+        osc.frequency.exponentialRampToValueAtTime(520, t + 0.18);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.5, t + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      } else if (type === 'success') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(520, t);
+        osc.frequency.setValueAtTime(660, t + 0.08);
+        osc.frequency.setValueAtTime(880, t + 0.16);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.7, t + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+        osc.start(t);
+        osc.stop(t + 0.25);
+      } else if (type === 'water') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(260, t);
+        osc.frequency.exponentialRampToValueAtTime(420, t + 0.16);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.55, t + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      } else {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(360, t);
+        gain.gain.linearRampToValueAtTime(this.masterVolume * 0.45, t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
+        osc.start(t);
+        osc.stop(t + 0.12);
       }
     }
   },

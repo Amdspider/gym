@@ -201,6 +201,13 @@
 
 /* ─── CHARTS ─── */
 .chart-wrap{height:145px;position:relative;margin:9px 0}
+#page-analytics canvas,
+#cal-performance-chart{
+  width:100% !important;
+  display:block;
+}
+#page-analytics canvas{height:180px !important}
+#cal-performance-chart{height:180px !important}
 
 /* ─── COACH PANEL ─── */
 #coach-panel{
@@ -316,4 +323,20 @@
 @media(max-width:768px){
   .coach-box{width:100%;max-width:100%;height:78vh;border-radius:18px 18px 0 0}
   #coach-panel{padding:0;align-items:flex-end}
+  .sec-hdr{flex-wrap:wrap;gap:10px;align-items:center}
+  .sec-title{font-size:24px;letter-spacing:2px}
+  #cal-stats{grid-template-columns:1fr 1fr !important;gap:10px !important}
+  .cal-hdr{flex-direction:column;align-items:flex-start;gap:10px}
+  .cal-cell{min-height:56px;padding:6px}
+  .cal-date-num{font-size:11px}
+  .cal-dot{width:8px;height:8px;margin-bottom:2px}
+  .cal-legend{flex-wrap:wrap;gap:10px}
+  #page-analytics .g2{gap:10px}
+  #page-analytics .card{padding:12px}
+}
+@media(max-width:500px){
+  #cal-stats{grid-template-columns:1fr !important}
+  #page-analytics canvas{height:160px !important}
+  #cal-performance-chart{height:160px !important}
+  .cal-cell{min-height:48px;padding:5px 4px}
 }
