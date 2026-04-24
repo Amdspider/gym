@@ -57,6 +57,40 @@
 
 
 <!-- ═══════════════════════════════════════════════════════
+     AUTH GATEWAY
+═══════════════════════════════════════════════════════ -->
+<div id="auth-gateway" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-hdr">
+      <h1>SPIDER OS</h1>
+      <p>Synchronize your performance data</p>
+    </div>
+    
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-t">☁️ Cloud Sync</div>
+      <p style="font-size:12px;color:var(--mut);line-height:1.7;margin-bottom:14px">Sign in with Google to restore your existing data or start fresh.</p>
+      <button class="btn" onclick="authGoogle()" style="width:100%">🔑 SIGN IN WITH GOOGLE</button>
+    </div>
+    
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-t">📧 Email Login</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input type="email" class="inp" id="front-auth-email" placeholder="your@email.com">
+        <input type="password" class="inp" id="front-auth-pass" placeholder="Password">
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="frontAuthEmail()" style="flex:1">LOG IN</button>
+          <button class="btn sec" onclick="frontAuthRegister()" style="flex:1">REGISTER</button>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align:center">
+      <button class="btn sec" onclick="skipAuthGateway()" style="background:transparent;border:none;color:var(--mut);text-decoration:underline;font-size:11px">Skip and use offline</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
      ONBOARDING MODAL (FALLBACK/AI CALIBRATION)
 ═══════════════════════════════════════════════════════ -->
 <div class="modal-ov" id="onboarding-modal" style="z-index:9999;background:var(--dk)">

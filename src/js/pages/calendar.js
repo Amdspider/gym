@@ -404,14 +404,40 @@ export const Calendar = {
           </div>
         </div>
 
+        <!-- Gym Workouts section -->
+        ${dayData.exercises && dayData.exercises.length > 0 ? `
+          <div style="margin-bottom:14px">
+            <div style="font-size:10px;color:var(--mut);font-weight:700;letter-spacing:1px;margin-bottom:8px">WORKOUT LOG</div>
+            ${dayData.exercises.map(ex => {
+              const doneSets = ex.sets ? ex.sets.filter(s => s.done) : [];
+              if (doneSets.length === 0) return '';
+              let vol = doneSets.reduce((s, set) => s + ((parseFloat(set.w)||0) * (parseFloat(set.r)||0)), 0);
+              return `
+              <div style="padding:6px;background:rgba(255,0,0,.03);border:1px solid var(--br);border-radius:5px;margin-bottom:6px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span style="color:var(--wht);font-size:12px;font-weight:700">${ex.name}</span>
+                  <span style="color:var(--red);font-size:10px">${vol > 0 ? vol + 'kg VOL' : doneSets.length + ' SETS'}</span>
+                </div>
+                ${doneSets.map(s => `
+                  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);padding:2px 0">
+                    <span>Set</span>
+                    <span>${s.w}kg x ${s.r} reps</span>
+                  </div>
+                `).join('')}
+              </div>`;
+            }).join('')}
+          </div>` : ''}
+
         <!-- Foods section -->
-        ${dayData.foods.length > 0 ? `
+        ${dayData.foods && dayData.foods.length > 0 ? `
           <div>
             <div style="font-size:10px;color:var(--mut);font-weight:700;letter-spacing:1px;margin-bottom:8px">NUTRITION LOG</div>
             ${dayData.foods.map(f => `
               <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:11px;border-bottom:1px solid rgba(255,255,255,.04)">
                 <span style="color:var(--wht)">${f.name}</span>
-                <span style="color:var(--gld)">${f.cal}kcal</span>
+                <span style="color:var(--mut)">P:${Math.round(f.pro||0)} C:${Math.round(f.crb||0)} F:${Math.round(f.fat||0)} 
+                  <span style="color:var(--gld);margin-left:4px">${f.cal}kcal</span>
+                </span>
               </div>`).join('')}
           </div>` : ''}
 

@@ -45,17 +45,65 @@ document.addEventListener('DOMContentLoaded', () => {
   Animations.drawWebBg('web-canvas');
   Animations.initParticles('pts');
 
-  runIntroSequence();
+  // Boot orchestration
+  const skip = localStorage.getItem('spiderOS_skipIntro') === 'true';
+  const hasProfile = !!Store.data.userProfile;
+
+  if (hasProfile) {
+    // Returning user
+    runIntroSequence(skip);
+  } else {
+    // First time user - show Auth Gateway explicitly over everything
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('auth-gateway').style.display = 'flex';
+  }
+
   setupCoachUI();
   setupAuthUI();
   setupConnectivityUI();
 });
 
+// Front Auth Global Handlers
+window.skipAuthGateway = () => {
+  document.getElementById('auth-gateway').style.display = 'none';
+  runIntroSequence(localStorage.getItem('spiderOS_skipIntro') === 'true');
+};
+
+window.frontAuthEmail = async () => {
+  const em = document.getElementById('front-auth-email').value;
+  const pw = document.getElementById('front-auth-pass').value;
+  if(!em || !pw) return alert("Enter email and password");
+  try {
+    await login(em, pw);
+    alert("Logged in securely! Downloading your data...");
+    document.getElementById('auth-gateway').style.display = 'none';
+    runIntroSequence(true); // Always skip cinematic intro when auth succeeds
+  } catch(err) { alert(err.message); }
+};
+
+window.frontAuthRegister = async () => {
+  const em = document.getElementById('front-auth-email').value;
+  const pw = document.getElementById('front-auth-pass').value;
+  if(!em || !pw) return alert("Enter email and password");
+  try {
+    await register(em, pw);
+    alert("Account created!");
+    document.getElementById('auth-gateway').style.display = 'none';
+    runIntroSequence(false); // Let them see the intro once
+  } catch(err) { alert(err.message); }
+};
+
+// Also listen for Google Auth success globally 
+document.addEventListener('auth:status', e => {
+  if(e.detail.authorized && document.getElementById('auth-gateway').style.display === 'flex') {
+    document.getElementById('auth-gateway').style.display = 'none';
+    runIntroSequence(true);
+  }
+});
+
 // Intro Animation orchestration
-function runIntroSequence() {
+function runIntroSequence(skip) {
   const intro = document.getElementById('intro');
-  const skip = localStorage.getItem('spiderOS_skipIntro') === 'true';
-  
   if(skip || !intro || intro.style.display === 'none') {
     if(intro) intro.style.display = 'none';
     launchApp();

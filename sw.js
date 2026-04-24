@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spider-os-v4.7';
+const CACHE_NAME = 'spider-os-v4.8';
 const ASSET_PATHS = [
   './',
   './index.html',
