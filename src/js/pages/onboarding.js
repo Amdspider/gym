@@ -117,11 +117,10 @@ export const Onboarding = {
 
   async generateAiProtocol() {
     if (!localStorage.getItem('spider_gemini_key')) {
-      alert("Please save your Gemini API key in Settings first!");
       return;
     }
     document.getElementById('coach-panel').style.display = 'flex';
-    document.getElementById('coach-output').innerHTML += `<div class="ai-msg">Analyzing biometrics and calibrating your protocol...</div>`;
+    document.getElementById('coach-msgs').innerHTML += `<div class="msg ai"><div class="msg-bub">Analyzing biometrics and calibrating your protocol...</div></div>`;
     
     const prompt = `You are a professional fitness coach. The user just inputted their biometrics:
     Weight: ${Store.data.userProfile.weight}kg, Height: ${Store.data.userProfile.height}cm, Age: ${Store.data.userProfile.age}, Gender: ${Store.data.userProfile.gender}.
@@ -130,9 +129,12 @@ export const Onboarding = {
     
     Please provide a concise, high-intensity, motivational daily routine, and a very short summary of a good meal plan for them. Format your response into a clean, easy-to-read list. Use Spider-man/tactical themed language.`;
 
-    const response = await AI.ask(prompt);
-    
-    document.getElementById('coach-output').innerHTML += `<div class="ai-msg">${response}</div>`;
-    AudioEngine.play('success');
+    try {
+      const response = await AI.ask(prompt);
+      document.getElementById('coach-msgs').innerHTML += `<div class="msg ai"><div class="msg-bub">${response}</div></div>`;
+      AudioEngine.play('success');
+    } catch(e) {
+      document.getElementById('coach-msgs').innerHTML += `<div class="msg ai"><div class="msg-bub" style="color:var(--red)">Failed to generate protocol. Check API key.</div></div>`;
+    }
   }
 };
